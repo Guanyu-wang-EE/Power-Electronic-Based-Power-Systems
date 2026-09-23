@@ -1,0 +1,176 @@
+=== PDF PAGE 1 ===
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 21, NO. 1, FEBRUARY 2006 433
+Wind Turbines Emulating Inertia and Supporting Primary Frequency Control
+Johan Morren, Student Member, IEEE, Sjoerd W. H. de Haan, Member, IEEE, Wil L. Kling, Member, IEEE, and
+J. A. Ferreira, Fellow, IEEE
+Abstract—The increasing penetration of variable-speed wind
+turbines in the electricity grid will result in a reduction of the
+number of connected conventional power plants. This will require
+changes in the way the grid frequency is controlled. In this letter,
+a method is proposed to let variable-speed wind turbines emulate
+inertia and support primary frequency control. The required
+power is obtained from the kinetic energy stored in the rotating
+mass of the turbine blades.
+Index Terms—Frequency control, stability, wind power genera-
+tion.
+I. I NTRODUCTION
+T
+HE NUMBER of wind turbines connected to the grid is
+steadily increasing, and some countries, such as Denmark,
+have high penetration levels of wind turbines already.
+Nowadays,thegridfrequencyiscontrolledbytheconventional
+power plants. The goal of the control is to keep the frequency
+within speciﬁed limits. To obtain this, conventional generators
+are equipped with so-called primary and secondary control. Fur-
+ther, the inertia in the grid limits the rate of frequency change in
+case of an unbalance between generated and consumed power.
+Contribution of wind farms to primary frequency control is
+nowadays required by several grid operators [1] but will be dif-
+ﬁcult to realize as the energy source (wind) is not directly con-
+trollable. So far, only one method has been proposed to meet this
+requirement, where the wind turbines do not supply the max-
+imum available power in normal situation, so that a margin re-
+mains for power control [2].
+Similar to conventional generators, wind turbines have a sig-
+niﬁcant amount of kinetic energy stored in the rotating mass of
+their blades. In case of variable-speed wind turbines, this en-
+ergy will not contribute to the inertia of the grid as the rota-
+tional speed is decoupled from the grid frequency by a power
+electronic converter. In this letter, additional control is proposed
+that makes the “hidden inertia” available to the grid. In this way,
+wind turbines can 1) emulate inertia and 2) support the primary
+frequency control for some time.
+II. W
+IND TURBINE INERTIA
+The proposed methods use the kinetic energy stored in the
+rotating mass of the wind turbine, which is given by
+(1)
+Manuscript received June 20, 2005; revised August 24, 2005. This work
+was funded in part by SenterNovem within the Program IOP-EMVT. Paper no.
+PESL-00056-2005.
+J. Morren, S. W. H. de Haan, and J. A. Ferreira are with the Electrical Power
+Processing Unit, Delft University of Technology, 2628CD Delft, The Nether-
+lands (e-mail: J.Morren@ewi.tudelft.nl).
+W. L. Kling is with the Electrical Power Systems Group, Delft University of
+Technology, 2628CD Delft, The Netherlands.
+Digital Object Identiﬁer 10.1109/TPWRS.2005.861956
+Fig. 1. Proposed controller. Upper branch: wind rotor control. Middle branch:
+inertia emulation. Lower branch: frequency control support.
+with
+ the inertia of the wind rotor and
+ its rotational speed.
+In electrical power engineering, often the so-called inertia con-
+stant
+is used
+(2)
+where
+ is the nominal apparent power. The inertia constant has
+the dimension time and gives an indication of the time duration
+that the generator can provide nominal power by only using its
+kinetic energy. Typical inertia constants for the generators of
+the large power plants are in the range of 2–9 s [3]. Typical
+values for wind turbines have roughly the same value: about 2–6
+s [4]. This implies that introduction of wind turbines in the grid
+does not necessarily reduce the amount of kinetic energy that is
+available. Additional control is proposed to emulate inertia and
+to support primary frequency control.
+III. P
+ROPOSED CONTROLLER
+Normally, the controllers of variable-speed wind turbines try
+to keep the turbine at its optimal speed in order to produce max-
+imum power. The controller gives a torque set point that is based
+on measured speed and power (see Fig. 1).
+The torque set point is an input for the converter control that
+realizes the torque by controlling the generator currents. An ad-
+ditional controller is proposed that adapts the torque set point as
+a function of the deviation of the grid frequency
+and of the
+rate of the change of the grid frequency
+ (see Fig. 1). The
+emulated inertia is proportional to the controller constant
+ ,
+and the support to primary frequency control is proportional to
+, where this latter loop is activated when the grid frequency
+exceeds certain limits.
+IV . SIMULATION SET-UP
+Simulations have been done only to show the ability of wind
+turbines to support primary frequency control. In this example,
+no extra inertia is emulated.
+A model of a small grid has been used. It consists of two
+synchronous generators (20 and 80 MW), an aggregated
+load (120 MW), and six variable-speed DFIG wind turbines
+(2.75 MW each), as described in [5]. Only one of the turbines
+is simulated; its output current is multiplied by six.
+0885-8950/$20.00 © 2006 IEEE
+
+=== PDF PAGE 2 ===
+434 IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 21, NO. 1, FEBRUARY 2006
+Fig. 2. Response to disconnection of synchronous generator with controller
+ON (solid) and controller OFF (dashed). (a) Grid frequency. (b) Wind turbine
+power. (c) Wind turbine rotational speed.
+An event is simulated in which the synchronous generator of
+20 MW is suddenly disconnected at
+ . This results in
+a change in frequency. The rate of frequency change depends,
+amongst others, on the system inertia.
+In Fig. 2, simulations are shown with controller OFF (dashed
+lines) and controller ON (solid line). Fig. 2(a) shows that the
+initial response is the same for both cases. When the frequency
+limit of 49.9 Hz is exceeded, the f-support controller is activated,
+resulting in a slightly higher frequency than can be realized with
+controller OFF.
+Fig. 2(b) shows the output power of the wind turbine. It in-
+creases at the moment that the frequency exceeds its limit and
+the controller is activated. Because kinetic energy from the wind
+turbine is used to supply more power to the grid, the rotational
+speed of the turbine is decreasing [see Fig. 2(c)]. The turbine
+resumes normal operation at
+. At this moment, the
+power drops to a value that is much lower than its initial value,
+because the turbine is not at its optimal speed anymore. In ad-
+dition, power is needed to speed the turbine up to its optimal
+operation speed, which implies that only a part of the available
+aerodynamic power is transmitted to the grid. The drop in power
+also explains why the frequency curves in Fig. 2(a) are different
+from each other after
+ .
+V. DISCUSSION AND CONCLUSION
+Fig. 2(a) shows that the wind turbine operated at only 0.35
+p.u. The additional power that was generated for support was
+roughly 0.1 p.u. The ability of the wind turbine to support the
+primary frequency control will be better at higher power, be-
+cause the kinetic energy stored in the blades will increase.
+During the support, the rotational speed of the wind turbine is
+decreasing. As a result, the power will drop considerable when
+the frequency control support is ended, as shown in Fig. 2(b).
+This drop in power will be undesirable mostly, especially when
+complete wind farms show this behavior. In larger wind farms,
+the effect can be mitigated partially by ending the frequency
+control support of the turbines at different times. Also a gradual
+change to normal operation, instead of the abrupt change that is
+applied in the example, will improve the behavior.
+The main conclusion that can be drawn from the results in this
+letter is that variable-speed wind turbines are able to support
+primary frequency control and to emulate inertia by applying
+additional control loops. For that purpose, the kinetic energy
+stored in the “hidden inertia” of the turbine blades is used.
+R
+EFERENCES
+[1] J. Matevosyan, T. Ackermann, and S. Bolik, “Technical regulations for
+the interconnection of wind farms to the power systems,” in Wind Power
+in Power Systems , T. Ackermann, Ed. Chicester, U.K.: John Wiley,
+2005, pp. 115–142.
+[2] P. Soerensen, A. D. Hansen, K. Thomsen, H. Madsen, H. A. Nielsen,
+N. K. Poulsen, F. Iov, F. Blaabjerg, and M. H. Donovan, “Wind farm
+controllers with grid support, ” in Proc. 5th Int. Workshop Large-Scale
+Integration Wind Power Transmission Networks Offshore Wind Farms,
+Glasgow, U.K., Apr. 7–8, 2005.
+[3] J. J. Grainger and W. D. Stevenson,Power System Analysis. New York:
+McGraw-Hill, 1994.
+[4] H. Knudsen and J. N. Nielsen, “Introduction to the modeling of wind tur-
+bines,” in Wind Power in Power Systems, T. Ackermann, Ed. Chicester,
+U.K.: Wiley, 2005, pp. 525–585.
+[5] J. T. G. Pierik, J. Morren, E. Wiggelinkhuizen, S. W. H. de Haan, T.
+G. van Engelen, and J. Bozelie, “Electrical and control aspects of off-
+shore wind turbines II (Erao-2), ”, Tech. Rep. ECN-C- -04-050, vol. 1,
+Dynamic models of wind farms, Jun. 2004.

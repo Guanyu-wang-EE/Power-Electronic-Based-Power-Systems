@@ -1,0 +1,2972 @@
+=== PDF PAGE 1 ===
+0885-8950 (c) 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2021.3061434, IEEE
+Transactions on Power Systems 1
+Understanding Small-Signal Stability
+of Low-Inertia Systems
+Uros Markovic, Member , IEEE, Ognjen Stanojev, Student Member , IEEE, Petros Aristidou, Senior Member , IEEE,
+Evangelos Vrettos, Member , IEEE, Duncan Callaway, Senior Member , IEEE, Gabriela Hug, Senior Member , IEEE
+Abstract—Large-scale integration of renewable generation, usu-
+ally interfaced to the network through power electronics, has
+led to drastic changes in power system dynamics. This paper
+presents novel insights into stability properties of such systems.
+For that purpose, a high-ﬁdelity dynamic model of a generic low-
+inertia power system has been developed. The full-order, state-of-
+the-art control schemes of both synchronous and converter-based
+generators are included, with the latter differentiating between
+grid-forming and grid-following mode of operation. Furthermore,
+the dynamics of transmission lines and loads are captured in
+the model. Using modal analysis techniques such as participation
+factors and parameter sensitivity, the most vulnerable segments
+of the system are determined and the adverse effects of timescale
+coupling and control interference are investigated. More precisely,
+this work characterizes the maximum permissible penetration levels
+of inverter-based generation as well as the nature of the associated
+unstable modes and the underlying dynamics. Finally, potential
+directions for improving the system stability margin under different
+generation portfolios are proposed for several benchmark systems.
+Index Terms—differential-algebraic equations, voltage source
+converter, synchronous generator, small-signal stability, low-inertia
+systems
+I. I NTRODUCTION
+D
+UE to convergence of economic and policy drivers, large-
+scale electric power grids are hosting rapidly increasing
+amounts of wind and solar generation as well as battery stor-
+age. These sources often interface with the grid via V oltage
+Source Converters (VSCs), whose interaction with the grid is
+substantially different from synchronous machines and poses
+many challenges for power system modeling, analysis and con-
+trol [1]. Moreover, a high penetration of fast-acting VSCs may
+create unexpected couplings and existing control approaches may
+become less valid, thus adversely affecting frequency and voltage
+stability. With the aim of providing solutions to the underlying
+problems, detailed and accurate models of low-inertia systems
+in the form of Ordinary Differential Equation (ODE) are needed
+for the purpose of small-signal analysis.
+The ﬁeld of small-signal analysis is well established for con-
+ventional power systems [2]–[4]. With the increasing integration
+of renewables, a number of publications addressing modeling and
+stability of 100 % inverter-based microgrids has emerged, vary-
+ing from the analysis of individual converter operation modes in
+a single-machine inﬁnite-bus equivalent [5]–[10] to operation of
+small and real-size distribution grids [11]–[21]. The former stud-
+ies mostly emphasize the validation of the proposed small-signal
+models and provide insights into the stability characteristics and
+modes of individual inverter control schemes by analyzing their
+sensitivities with respect to system parameters. In particular,
+[5] and [6] investigate stability properties of grid-supporting
+inverters operating as virtual synchronous machines, [7] com-
+pares dynamic characteristics of droop-based grid-feeding and
+grid-supporting VSCs, whereas [8]–[10] extend these analyses
+to different types of grid-forming and grid-following converter
+control schemes. While providing valuable insights into the
+operation of individual converter-interfaced generation units, all
+aforementioned studies consider single-generator models and a
+stiff grid equivalent, which oversimpliﬁes the problem.
+Multi-inverter conﬁgurations have also been thoroughly in-
+vestigated in the literature. Studies in [11]–[13] propose var-
+ious state-space models for small systems comprised of two
+or three inverters connected through constant impedance lines,
+followed by stability analyses such as droop gain parameter
+sweeps and the impact of R/X ratio of the interconnecting
+cables. However, the authors use simpliﬁed inverter models
+comprising only droop control and LCL ﬁlter dynamics, thus
+neglecting device-level control and line dynamics in the process.
+Moreover, they only consider grid-forming operation and do not
+take into account a potentially adverse impact of Phase-Locked
+Loops (PLLs) on system stability. Alternatively, [14] focuses
+on interactions between a virtual synchronous generator and a
+converter-interfaced load by considering small-signal stability
+under different operating conditions. While the authors include
+a dynamic model of the load and the interconnecting line, they
+analyze stability solely via parameter sweeps of the virtual inertia
+constant and load impedance, which does not provide enough
+insight into the nature of potential instabilities. A more general
+and rigorous approach towards synchronization and stability
+analysis of droop-based microgrids is taken in [15]–[17], where
+the appropriate conditions for synchronization, power sharing
+and voltage stability of droop-controlled inverters in islanded
+microgrids have been derived. Nevertheless, the aforementioned
+simpliﬁcations in terms of model complexity are still present.
+In contrast, the studies in [19]–[22] focus on detailed system
+models which include both low and high inverter frequency
+dynamics as well as the network and load dynamics, and propose
+accurate small-signal representation of real-size microgrids. The
+work in [22] provides analysis in terms of system eigenvalues
+and their sensitivity to different states. It was observed that the
+dominant low-frequency modes are highly sensitive to network
+conﬁguration and the parameters of the power sharing controller,
+whereas the high frequency modes are largely sensitive to the
+inverter inner loop controllers, network dynamics, and load dy-
+namics. However, only grid-forming mode of operation has been
+taken into consideration. Alternatively, the authors in [19] present
+a new methodology for forming, augmenting, and modifying
+the state-space matrices of large microgrids comprising both
+grid-forming and grid-following inverter control schemes, and
+investigate a 100 % inverter-based 69-bus distribution system.
+The emphasis is however on model validation, state matrix par-
+titioning and optimal control tuning for improving the oscillatory
+modes in the system, but not on the stability analysis. Further-
+more, [20] sets a particular focus on inner cascade loops and the
+differences in small-signal stability of a three-inverter microgrid
+Authorized licensed use limited to: Cyprus University of Technology. Downloaded on March 18,2021 at 09:27:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+=== PDF PAGE 2 ===
+0885-8950 (c) 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2021.3061434, IEEE
+Transactions on Power Systems 2
+utilizing conventional PI-based and internal model-based control
+approaches. Eigenvalue sensitivity analysis with respect to power
+droop gains and ﬁlter inductance again reveals that the low-
+frequency modes are highly sensitive to the parameters of the
+power sharing controllers for both methods.
+On the other hand, [21] proposes an approximation method
+based on critical clusters for assessing the droop gain stability
+margins of medium-scale islanded microgrids that takes ad-
+vantage of the fact that the contribution of inverters to the
+small-signal stability may depend on their location and the
+interactions with each other. Both [20] and [21] are however
+solely restricted to grid-forming VSCs and do not investigate the
+adverse interactions between different converter control schemes.
+The latter aspect is partially tackled in [23] by analyzing stability
+issues between a grid-feeding VSC and an inverter operating as
+a virtual synchronous generator, with a focus on virtual inertia
+characteristics and interaction between power converters and the
+AC grid. Moreover, [23]–[25] highlight some conceptual differ-
+ences between a traditional and an inverter-based power system
+in terms of associated control timescales. Nonetheless, they all
+conﬁne the analysis only to 100 % inverter-based microgrids.
+While the aforementioned studies provide various perspectives
+on stability of microgrids and zero-inertia systems, less em-
+phasis has been placed on performance of large-scale systems
+with a mixture of synchronous machines and VSCs. Having
+in mind that operators in Ireland [26], Texas [27] and South
+Australia [28] are already facing obstacles regarding high wind
+penetration during certain periods of the day, the fundamental
+understanding of low-inertia systems and their stability properties
+is of crucial importance. Nevertheless, simulation and analysis of
+large power systems with a mix of synchronous and converter-
+based generation involves a signiﬁcant computational burden.
+To this end, commercial software packages such as PSLF [29],
+DSATools [30] and PSS/E [31] are widely employed, both for
+industrial and academic purposes. While these software tools
+incorporate detailed dynamic models of different generator types
+and provide means for large-scale time-domain simulations, they
+are restricted in terms of analytical capabilities and ﬂexibility.
+This mostly stems from underlying modeling assumptions valid
+for traditional Synchronous Generator (SG)-based power net-
+works, which are not applicable to inverter-dominated systems.
+For instance, the widely employed dynamic models for wind and
+photovoltaic plants, originally proposed by WECC renewable
+energy modeling task force [32], do not consider dynamics of
+high-frequency converter controls and PLLs, which can have a
+detrimental impact on stability. Furthermore, transmission line
+dynamics are typically neglected in power system studies due to
+drastically shorter timescales compared to SG dynamics. With
+the introduction of fast-acting Power Electronic (PE) devices,
+such assumptions are not valid anymore [1].
+In turn, the existing literature on stability of large-scale trans-
+mission systems with high share of inverter-based generation
+tends to neglect important aspects of system dynamics and
+conﬁne the analytical analysis to simpliﬁed mathematical models
+and state-space formulations. More precisely, [33]–[36] study the
+impact of large-scale wind power generation on power system
+oscillation, transient and small-signal stability. However, the
+authors either use oversimpliﬁed synchronous generator models
+(i.e., not equipped with governors and exciters) [33], neglect
+inner control loops of inverter-interfaced wind generation [34],
+[35] or focus on high-level probabilistic frameworks [36], which
+obstructs them from capturing some important dynamic interac-
+tions and phenomena. On the other hand, [37] and [38] employ
+systematic nonlinear simulations and off-the-shelf small-signal
+analysis tools to assess the impact of increased penetration of
+wind and photovoltaic generation on stability of the Kundur two-
+area and the western North American power system, respectively.
+Both studies are however restricted solely to the investigation of
+inter-area oscillations and the nature of underlying oscillatory
+modes.
+Alternatively, a two-bus system comprising a grid-following
+VSC and a synchronous generator was investigated in [39] and
+[40] through eigenvalue analysis. Both studies point out that the
+PLL can be a source of oscillatory modes and instability. The
+work in [39] incorporates relatively detailed control structures of
+both units, but mostly focuses on model validation and sensitivity
+analysis to determine the optimal ranges of relevant control
+parameters. On the other hand, the authors in [40] provide
+insightful remarks regarding the permissible penetration levels
+of grid-following inverters, as well as the relevance of different
+controllers on small-signal stability. However, they employ an
+inverter scaling method that complicates model implementation
+on a larger system and omit the Power System Stabilizer (PSS)
+and important ﬂux dynamics from the SG model. Furthermore,
+neither of the aforementioned studies explore the deeper causes
+of instability, nor consider the impact of different converter
+operation modes. Finally, the focus is primarily on distribution
+networks and microgrids, thus neglecting the potential impact of
+transmission line dynamics.
+The work presented in this paper improves on the existing
+literature in several ways. In contrast to [19]–[25], we include
+several converter operation modes and investigate their interac-
+tions in a 100 % inverter-dominated transmission network. The
+analysis is also extended to low-inertia systems and the adverse
+interference between different components of synchronous and
+converter-based generation. However, unlike the work in [33]–
+[40], we employ a more detailed representation of a generic,
+low-inertia system that captures all relevant physical properties
+and associated dynamics, including various generation models
+and control schemes as well as line and load dynamics. More-
+over, unlike most of the existing studies, we are not primarily
+concerned with parameter sensitivity but rather with investigating
+maximum permissible penetrations of PE-interfaced generation
+under various system conﬁgurations. In particular, the critical
+levels of installed inverter-based generation and the key modes
+of arising instability are identiﬁed and mapped back to the
+respective controller dynamics.
+Our ﬁndings suggest that the root cause of instability cannot
+be associated solely with the aggregate power injection of VSC
+units, as it varies depending on the installed capacity and operat-
+ing setpoints of renewable generation. Additionally, the problems
+arising from underlying timescale coupling of converter and
+transmission line dynamics, as well as the timescale separation
+between the respective VSC and SG controllers regulating the
+same system quantities have been observed. As a result, new
+insights into the overall stability of low- and no-inertia systems
+are presented, together with potential directions for improving
+the system stability margin under different generation portfolios
+and the analytical expressions for necessary control criteria
+pertaining to the impact of line dynamics. Furthermore, some
+of the widely common premises in terms of stability and overall
+system dynamics have been debunked solely as an artifact of
+inadequate modeling and system representation, which justiﬁes
+the importance of the proposed ODE formulation and the level
+Authorized licensed use limited to: Cyprus University of Technology. Downloaded on March 18,2021 at 09:27:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+=== PDF PAGE 3 ===
+0885-8950 (c) 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2021.3061434, IEEE
+Transactions on Power Systems 3
++
+−
+vsw
++
+−
+vf
++
+−
+vt
++
+−
+vdc
+Rf Lf
+Cf
+Rt Ltif ig
+CdcGdc
+idc isw
+Device
+Lev
+el
+Control
+System
+Lev
+el
+Control
+uus
+v⋆
+dc
+rs
+v⋆
+sw∠θc
+if
+yd
+ig
+ys
+i⋆
+dc rd
+P
+ower Converter (Device) Model
+System
+Lev
+el
+Control
+Device
+Level
+Control
+Power
+Converter
+Model
+-
+power ctrl.
+- AC voltage ctrl.
+- frequency ctrl.
+-
+reference tracking
+- DC voltage ctrl.
+- operating in SRF
+-
+DC-link capacitor
+- lossless switching
+- output ﬁlter
+setp
+oint
+input
+output
+references
+device
+references
+system
+output
+measuremen ts
+Fig. 1. Representation of the VSC model: two-level VSC connected through a
+transformer to the grid (top); general input-output block structure of the power
+converter model and its control scheme (bottom).
+of detail included in this study.
+The remainder of the paper is structured as follows. In
+Section II, detailed dynamical models and control schemes
+of synchronous and converter-based generators are presented,
+together with the general ODE formulation of an arbitrary low-
+inertia power system. Subsequently, the underlying timescales
+and the potential adverse dynamical interactions are discussed
+in Section III. The numerical results from different case studies
+and the respective small-signal stability margins are illustrated
+in Sections IV and V, whereas Section VI draws the main
+conclusions and discusses the key ﬁndings and outlook of the
+study.
+II. P OWER SYSTEM MODELING
+The proposed model includes detailed representation of rel-
+evant dynamics and controls pertaining to synchronous and
+converter-interfaced generation, with the latter one encompassing
+both grid-forming and grid-following mode of operation. In
+addition, the dynamics of network elements such as impedance
+loads, shunt capacitors and transmission lines are also taken into
+consideration.
+We use R to denote the set of real and natural numbers and,
+e.g., R≥a := {x ∈ R|x ≥ a}. Given an angle θ ∈ [−π, π), the
+2-D rotation matrix is given by
+R(θ) :=
+[
+cos θ − sin θ
+sin θ cos θ
+]
+∈ R2×2. (1)
+Moreover, we deﬁne the 90◦ rotation matrix j := R(π/2) that
+can be interpreted as an embedding of the complex imaginary
+unit √
+−1 into R2. For column vectors x ∈ Rn and y ∈ Rm
+we use (x, y) = [ xT, yT]T ∈ Rn+m to denote a stacked vector.
+Furthermore, In denotes the identity matrix of dimension n, ⊗
+denotes the Kronecker product, and ∥x∥ denotes the Euclidean
+norm. Matrices of zeros of dimension n × m are denoted by
+0n×m, and 0n and 1n denote column vectors of zeros and ones
+of length n.
+P
+ower
+Converter
+Model
+xm =
+(if,v f,i g,v dc)
+rd =
+(θr,ωr,v ⋆
+sw,i ⋆
+dc) ym =
+(if,v f,i g,v dc)
+Fig. 2. Simpliﬁed MIMO structure of the device model.
+A. Converter Control Scheme
+The prevalent control architecture for power converters is the
+two-level VSC shown in Fig. 1. In this setup, an outer system-
+level control provides a reference for the converter’s terminal
+voltage that is subsequently tracked by a cascaded device-level
+controller. We ﬁrst present the model of a two-level voltage
+source converter and subsequently discuss the individual control
+blocks depicted in Fig. 1.
+1) Power Converter Model: The three-phase power converter
+model (i.e., the device model in Fig. 1) used in this study
+consists of a DC-link capacitor, a lossless switching block which
+modulates the DC-capacitor voltage vdc ∈ R>0 into a three-
+phase AC voltage vabc
+sw ∈ R3, and an output ﬁlter. Throughout
+this work, we assume that the DC-source current idc ∈ R>0
+is supplied by a controllable source (e.g., an energy storage or
+a curtailed renewable generation) and can be used as a control
+input. Averaging the dynamics over one switching period and
+expressing them in per-unit yields:
+cdc
+ωb
+˙vdc = −gdcvdc − isw + idc, (2a)
+ℓf
+ωb
+˙iabc
+f = −rf iabc
+f + vabc
+sw − vabc
+f , (2b)
+cf
+ωb
+˙vabc
+f = +iabc
+f − iabc
+g , (2c)
+where cdc ∈ R>0 and gdc ∈ R>0 denote the DC capacitance
+and conductance, and cf ∈ R>0, ℓf ∈ R>0, rf ∈ R>0
+represent the AC ﬁlter capacitance, inductance and resistance,
+respectively. The converter is controlled by the modulation
+signal mabc ∈ [−13, 13] that controls the modulated three-phase
+voltage vabc
+sw = 1
+2 mabcvdc and the current isw = 1
+2 mabcT
+iabc
+f
+ﬂowing into the switching block. Moreover, we use iabc
+f ∈ R3,
+vabc
+f ∈ R3, and iabc
+g ∈ R3 to denote the three-phase ﬁlter
+current, three-phase converter voltage and three-phase current
+injection into the system. As this work deals strictly with per-
+unit formulation of converter models and controls, the explicit
+per-unit declaration of system variables in (2) and the rest of the
+paper will be omitted for brevity.
+We assume that the three-phase signals are balanced and, given
+a reference angle θr ∈ [−π, π), the converter variables can be
+deﬁned in a rotating dq-reference frame by applying the power-
+variant dq-transform (see e.g., [41])
+T (θr) := 2
+3
+[
+cos θr cos(θr − 2π
+3 ) cos(θ r + 2π
+3 )
+sin θr sin(θr − 2π
+3 ) sin(θ r + 2π
+3 )
+]
+(3)
+to the three-phase converter signals (e.g., vdq
+f = T (θr)vabc
+f ). For
+reasons similar to the ones pertaining to per-unit notation, the dq
+superscript will not be used in the remainder of the paper, i.e.,
+the presented converter model will be described in dq-vector
+form x := xdq := (x d, xq) and per-unit. Therefore, guided
+Authorized licensed use limited to: Cyprus University of Technology. Downloaded on March 18,2021 at 09:27:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+=== PDF PAGE 4 ===
+0885-8950 (c) 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2021.3061434, IEEE
+Transactions on Power Systems 4
+by the practice commonly employed in power electronics (see
+Appendix A), we rewrite ﬁlter dynamics in (2b)-(2c) as
+˙if = ωb
+ℓf
+(vsw − vf) −
+(rf
+ℓf
+ωb + jωbωr
+)
+if , (4a)
+˙vf = ωb
+cf
+(if − ig) − jωbωrvf . (4b)
+The converter is usually interfaced to the grid through a trans-
+former, with the dynamics of transformer current (i.e., current
+injected into the grid) described by
+˙ig = ωb
+ℓt
+(vf − vt) −
+(rt
+ℓt
+ωb + jωbωr
+)
+ig, (4c)
+where rt ∈ R>0 and ℓt ∈ R>0 denote the transformer’s per-
+unit resistance and inductance, vt ∈ R2 is the voltage at the
+connection terminal, and ωr ∈ R>0 is the normalized reference
+for the angular velocity of the dq-frame.
+Expressions in (4) represent the AC-side dynamics of the
+power converter and, together with DC-side dynamics in
+(2a), complete the 7th-order power converter model described
+by xm = (i f , vf , ig, vdc) ∈ R7 and depicted in Fig. 2.
+The input vector comprises device-level references 1 rd =
+(θr, ωr, v⋆
+sw, i⋆
+dc) ∈ R5 and the measurement output ym encom-
+passes full state feedback for system- and device-level control
+(i.e., xm ⊂ ym), as well as the converter’s AC-voltage magnitude
+Vc ∈ R>0 and instantaneous active and reactive power injection
+(pc, qc) ∈ R2 given by
+Vc := ∥vf ∥, p c := vT
+f ig, q c := vT
+f jTig. (5)
+The latter three measurements are directly obtained from con-
+verter’s output voltage vf and current ig and are therefore not
+explicitly included in ym := xm for brevity. However, these
+measurements will be considered available to the system-level
+control. In fact, this control layer often includes processing of
+vf and ig such that the quantities in (5) are internally obtained.
+Moreover, note that we assume vsw := v⋆
+sw, i.e., the modulation
+voltage reference v⋆
+sw is perfectly transformed to the AC side.
+Due to high modeling complexity and very fast underlying
+dynamics [42], the converter switching is not included in the
+model nor will it be considered throughout this study.
+2) System-Level Control: The desired dynamic behavior of
+the power converter as seen from the system point of view is
+commonly prescribed by a dynamic controller of the form
+˙xs = κ(xs, ys, us), (6a)
+rs = h(xs, ys, us), (6b)
+where xs ∈ Rn is a vector of internal controller states, ys ∈ Rm
+are the measured converter outputs, us ∈ Rp are the prescribed
+control setpoints, and rs ∈ Rq is a vector of computed references
+sent to the device-level control. A simpliﬁed representation of
+the general MIMO structure for both grid-forming and grid-
+following operation mode is illustrated in Fig. 3, with the former
+mode potentially differentiating between several representative
+classes of control such as droop control [43], [44], Virtual
+Synchronous Machine (VSM) control [45], [46], Virtual Oscil-
+lator Control (VOC) [47], [48] and matching control [49], [50].
+However, under certain trivial conditions, all aforementioned
+control strategies showcase a small-signal equivalence (see e.g.,
+[48]), and can be subsumed under a single droop-based controller
+1We assume perfect tracking of the DC-current reference, i.e., idc = i⋆
+dc in
+(2a).
+System
+Lev
+el
+Control
+xfollow
+s =
+(
+θs,ε,˜pc, ˜qc
+)
+ys =
+(vf,p c,q c)
+us = (p⋆
+c,q ⋆
+c,ω⋆
+c,V ⋆
+c )
+rs =i⋆
+f
+ˆrs = (θs,ωs)
+System
+Lev
+el
+Control
+xform
+s =
+(
+θc, ˜ωc, ˜vc
+)
+ys =
+(vf,i g,v dc)
+us = (p⋆
+c/v⋆
+dc,q ⋆
+c,ω⋆
+c,V ⋆
+c )
+rs =
+(
+θc,ωc,v ⋆
+f
+)
+Fig. 3. Simpliﬁed MIMO structure of the system-level control: grid-following
+operation mode (top) and grid-forming operation mode (bottom).
+for simplicity. Therefore, the remainder of this paper will focus
+only on droop control as a mean of system-level regulation.
+Grid-F ollowing Control: The two converter modes are fun-
+damentally different. In the context of grid-following control,
+the measurements ys = ( vf , pc, qc) ∈ R4 are commonly the
+output voltage and the active and reactive power. Moreover, (6)
+models a synchronization device - usually a PLL - that estimates
+the phase angle θs ∈ [−π, π) of the voltage vf as well as the
+synchronous (grid) frequency ωs ∈ R>0 at the Point of Common
+Coupling (PCC), and provides them as reference ˆrs = (θs, ωs)
+to the device-level control (see Fig. 3). Additionally, the so-
+called outer control loop is used to calculate the current reference
+i⋆
+f ∈ R2 based on the mismatch between measured signals ys
+and prescribed setpoints us. Hence, the system-level controller
+is described by xfollow
+s = (θs, ε, ˜pc, ˜qc) ∈ R4, where ˜pc ∈ R
+and ˜qc ∈ R are the internal states corresponding to active and
+reactive power, respectively. Since the angle ( θs) and frequency
+(ωs) references are measured and passed through to device-level
+control (i.e., they are not regulated by an appropriate control
+law), we do not include them into the main output reference
+vector r.
+The most common PLL implementation is a so-called type-2
+SRF PLL [51], which achieves synchronization by diminishing
+the q-component vq
+f ∈ R of the voltage via PI control, thus
+aligning the d-axis of the Synchronously-rotating Reference
+Frame (SRF) with the output voltage vector vf [7], [9], [10]:
+˙ε = vq
+f , (7a)
+ωs = ω0 + Ks
+P vq
+f + Ks
+I ε, (7b)
+˙θs = ωbωs. (7c)
+Here, (Ks
+P , Ks
+I ) are the proportional and integral control gains
+of the synchronization unit, ω0 = 1 p.u. is the nominal angular
+frequency, and ε ∈ R is the integrator state. Note that the grid-
+following converters require an established three-phase voltage at
+the connection terminal in order to obtain a reasonable frequency
+(i.e., angle) signal. Therefore, they do not posses standalone nor
+black start capabilities.
+Having determined the synchronous angle and frequency
+(θs, ωs), the outer control loop subsequently computes the cur-
+rent reference i⋆
+f ∈ R2. By employing frequency and voltage
+droop control (R ω
+c ∈ R≥0, Rv
+c ∈ R≥0) in combination with
+integral controllers Kd
+I,f ∈ R>0 and Kq
+I,f ∈ R>0, the outer
+control loop, described by internal states variables ( ˜pc, ˜qc), regu-
+Authorized licensed use limited to: Cyprus University of Technology. Downloaded on March 18,2021 at 09:27:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+=== PDF PAGE 5 ===
+0885-8950 (c) 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2021.3061434, IEEE
+Transactions on Power Systems 5
+lates the power output (pc, qc) to its respective setpoint (p⋆
+c , q⋆
+c ),
+as follows:
+˙˜pc = Kd
+I,f (p⋆
+c − pc − Rω
+c (ωs − ω⋆
+c )) , (8a)
+˙˜qc = Kq
+I,f (q⋆
+c − qc − Rv
+c (∥vf ∥ − V⋆
+c )) . (8b)
+Due to the P − f and Q − V droop characteristics, the active
+power reference is adjusted in response to a deviation of the
+measured frequency ωs with respect to the frequency setpoint ω⋆
+c ,
+whereas the reactive power reference is modiﬁed according to the
+mismatch between the magnitude of the output voltage ∥vf ∥ and
+the converter voltage setpoint V⋆
+c . Hence, the internal state vector
+of the system-level controller is xfollow
+s = (θs, ωs, ˜pc, ˜qc) ∈ R4,
+with ˜pc and ˜qc representing the power (i.e., dq-current) refer-
+ences. It should be pointed out that the controller (8) can take
+different forms, varying from a traditional frequency/AC-voltage
+droop control [14] and droop control with a low-pass ﬁlter [10]
+to DC-energy/reactive power droop control [52].
+The computed power references are then transformed into
+the corresponding current reference signal rs = i⋆
+f , with two
+commonly used implementations for balanced systems: a con-
+stant current and a constant power mode. The ﬁrst approach
+directly feeds the power references to the device-level control
+i⋆
+f = (˜pc, ˜qc), while the second mode adjusts them based on
+output voltage measurement such that the converter’s power
+output is kept constant:
+i⋆
+f
+d =
+vd
+f ˜pc + vq
+f ˜qc
+∥vf ∥ , i ⋆
+f
+q =
+vq
+f ˜pc − vd
+f ˜qc
+∥vf ∥ . (9)
+Grid-F orming Control: Droop control is the prevalent con-
+trol scheme for parallel grid-forming converters [53]–[55]. It
+achieves synchronization through measuring power imbalance
+and is inspired by the traditional primary frequency control of
+a synchronous machine. In particular, by appropriately adjust-
+ing the individual droop factors, it enables self-synchronization
+through the power grid and power sharing in proportion to the
+converter rating, while using only local measurements. Droop
+control is given by
+ωc = ω⋆
+c + Rp
+c λz(s) (p⋆
+c − pc)
+ 
+˜ωc
+(10a)
+vd
+c = V⋆
+c + Rq
+cλz(s) (q⋆
+c − qc)  
+˜vc
+, (10b)
+with Rp
+c ∈ R>0 and Rq
+c ∈ R≥0 being the droop gains,
+λzθ(s) = ωz
+ωz+s representing the low-pass ﬁlter applied to the
+power measurements, ωz ∈ R>0 denoting its cut-off frequency,
+˙θc = ωbωc and vq
+c = 0. We emphasize that, unlike for the grid-
+following operation mode, in this case the angle θc, frequency
+˜ωc ∈ R, and voltage ˜vc ∈ R are internal states of the control. In
+contrast, the active active and reactive power injections pc and
+qc are measured, i.e., ys = (pc, qc) ∈ R2. Therefore, the control
+state vector can be deﬁned as xform
+s = (θc, ˜ωc, ˜vc), where
+˙˜ωc = −ωz ˜ωc + Rp
+c ωz(p⋆
+c − pc), (11a)
+˙˜vc = −ωz˜vc + Rq
+cωz(q⋆
+c − qc). (11b)
+3) Device-Level Control: We start off by analyzing the
+device-level control of grid-forming converters, with a general
+structure presented in Fig. 4. This control layer provides both AC
+and DC-side reference signals for the VSC device. The AC-side
+controller operates in a synchronously-rotating dq-frame, with
+the reference angle θc and velocity ωc provided by the system-
+level control (6). In particular, given a voltage reference v⋆
+f ∈ R2
+in dq-coordinates deﬁned by (θc, ωc), the device-level control
+is described by a cascade of voltage and current controllers
+(also called inner control loops) computing a switching voltage
+reference v⋆
+sw ∈ R2 [5], [46]. More precisely, it encompasses a
+PI voltage controller
+˙ξ = v⋆
+f − vf , (12a)
+i⋆
+f = Kv
+P (v⋆
+f − vf) + Kv
+I ξ + Kv
+F ig + jωccf vf , (12b)
+that provides an internal current reference i⋆
+f for a current PI
+controller
+˙γ = i⋆
+f − if , (13a)
+v⋆
+sw = Ki
+P (i⋆
+f − if) + Ki
+I γ + Ki
+F vf + jωcℓf if , (13b)
+where (Kv
+P , Ki
+P ) ∈ R2
+>0, (Kv
+I , Ki
+I) ∈ R2
+≥0 and (Kv
+F , Ki
+F ) ∈
+Z2
+{0,1} are the respective proportional, integral, and feed-forward
+gains, ξ ∈ R2 and γ ∈ R2 represent the integrator states,
+and superscripts v and i denote the voltage and current con-
+trollers [9], [22], [56]. Note that the angular velocity ωc of an
+SRF is reﬂected in the last terms of (12b) and (13b).
+Finally, the DC voltage is controlled through the DC-current
+source and a PI controller, as follows:
+˙χ = v⋆
+dc − vdc, (14a)
+idc = K dc
+P (v⋆
+dc − vdc) + K dc
+I χ + K dc
+F i⋆
+dc, (14b)
+with DC-voltage setpoint ud = v⋆
+dc ∈ R>0 being an external
+control input, χ ∈ R the internal state variable, and proportional,
+integral, and feed-forward gains denoted by K dc
+P ∈ R>0, K dc
+I ∈
+R≥0, and K dc
+F ∈ {0, 1}, respectively. The DC current reference
+i⋆
+dc ∈ R>0 is determined by the operating point (V⋆
+c , p⋆
+c , q⋆
+c )
+and the converter losses, which indicates that for vdc = v⋆
+dc the
+DC-side current will be idc = i⋆
+dc.
+Having computed the AC current and voltage (i⋆
+f , v⋆
+sw) and DC
+current (i⋆
+dc) reference signals, the device-level control output
+rd = ( θr, ωr, v⋆
+sw, i⋆
+dc) is sent to the power converter, with
+(θr, ωr) = ( θc, ωc) being the angular reference adopted from
+the system-level control. The state vector of the controller is
+described by xd = (ξ, γ, χ) ∈ R5. In contrast, the system-level
+controller of a grid-following converter provides ﬁlter current
+reference. Therefore, the device-level control only comprises
+AC and DC current computation given by (13)-(14) (i.e., xd =
+(γ, χ) ∈ R3), thus bypassing the inner voltage controller. The
+output reference vector rd = ( θs, ωs, v⋆
+sw, i⋆
+dc) is provided to
+the power converter model, with (θr, ωr) = (θ s, ωs) being
+the measured angle and frequency references obtained by a
+synchronization unit within the system-level control.
+4) Uniform Converter Model: In order to facilitate an ODE
+form of an arbitrary, generic low-inertia system, we propose
+a uniform converter model that comprises both grid-forming
+and grid-following mode of operation within a single control
+structure. More precisely, we modify the latter control design
+(both in terms of system- and device-level control) such that it
+ﬁts the input-output characteristic of a grid-forming VSC while
+Device
+Lev
+el
+Control
+xd =
+(ξ,γ,χ)
+yd =
+(if,v f,i g,v dc)
+rs =v⋆
+f/i⋆
+f , ud =v⋆
+dc
+rd =
+(
+θr,
+ωr,v ⋆
+sw,i ⋆
+dc
+)
+Fig. 4. Simpliﬁed MIMO structure of the device-level control.
+Authorized licensed use limited to: Cyprus University of Technology. Downloaded on March 18,2021 at 09:27:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+=== PDF PAGE 6 ===
+0885-8950 (c) 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2021.3061434, IEEE
+Transactions on Power Systems 6
+Cdc Gdc
+idcisw
+vt
+Grid
+dq
+abc
+dq
+abc
+ig
+P
+ower
+Calculation
+Unit
+vf
+Phase
+Lo
+cked
+Loop
+SRF
+Voltage
+Controller
+SRF
+Curren
+t
+Controller
+PWM
+Reactiv
+e
+Power
+Controller
+Activ
+e
+Power
+Controller
+Virtual
+Imp
+edance
+Block
+q⋆
+c
+V ⋆
+c
+p⋆
+c
+ω⋆
+c
+(vf,i g)
+θc
+Rt Lt
+vsw
+if
+Rf
+Lf
+Cf
+iabc
+g
+vabc
+f
+i⋆
+f v⋆
+sw m
+qcpc
+θc
+ωc
+vdc
+v⋆
+f
+∥vc∥
+ω⋆
+c/ωs
+DC-Side Controllerv⋆
+dc
+i⋆
+dc
+System-level control
+Device-lev el control
+Device
+model
+Inner ctrl. loopOuter
+ctrl. loop
+it
+Fig. 5. General conﬁguration of the implemented uniform VSC control structure.
+still preserving its original dynamical properties. The general
+conﬁguration of the implemented control scheme is illustrated 2
+in Fig. 5, with three main segments (i.e., system-level control,
+device-level control and device model) corresponding to the
+block diagram in Fig. 1. However, the PLL has no function in
+the grid-forming operation, as it is bypassed and the frequency
+setpoint ω⋆
+c is directly fed to the Active Power Controller (APC).
+Furthermore, the virtual impedance embeds an additional degree
+of freedom for active stabilization and disturbance rejection by
+providing a minor cross-coupling between d- and q-components
+via the resistive and inductive elements rv and ℓv. This is
+achieved by computing a new voltage reference
+v⋆
+f = vc − (rvI2 + jω0ℓv)if , (15)
+and passing it through to the device-level control.
+In terms of grid-following operation, the main distinction lies
+in the system-level control design, i.e., the droop implementation
+of the outer control loop. Instead of applying the controller
+(8) and drooping the frequency and voltage imbalance in order
+to determine the power (i.e., current) references, we employ a
+grid-forming control law given by (10). However, the frequency
+and voltage setpoint inputs (ω⋆, V⋆) := ( ω⋆
+c , V⋆
+c ) are replaced
+by measurements (ω⋆, V⋆) := (ω s, ∥vf ∥). Furthermore, we
+introduce the terms for low-pass ﬁltered active and reactive
+power
+˜pc = ωz
+ωz + s pc, ˜qc = ωz
+ωz + s qc, (16)
+and, by neglecting the low-pass ﬁltering of constant setpoints p⋆
+c
+and q⋆
+c , obtain
+ωc = ω⋆ + Rp
+c (p⋆
+c − ˜pc) , v d
+c = V⋆ + Rq
+c (q⋆
+c − ˜qc) . (17)
+Although it does not meet the input-output criteria depicted in
+Fig 3, the presented grid-following control still achieves power
+reference tracking while simultaneously supporting the voltage
+and frequency at the PCC. In contrast to the controller (8), where
+2Colored blocks in Fig. 5 indicate the presence of internal control dynamics.
+TABLE I
+CONVERTER CONTROL PARAMETERS .
+Parameter Symbol Value Unit
+Active power droop gain Rp
+c 2 %
+Reactive power droop gain Rq
+c 0.1 %
+LPF cut-off frequency fz 5 Hz
+RLC ﬁlter resistance rf 0.03 p.u.
+RLC ﬁlter inductance ℓf 0.08 p.u.
+RLC ﬁlter capacitance cf 0.074 p.u.
+P-gain of SRF current control Ki
+P 0.74 -
+I-gain of SRF current control Ki
+I 1.19 -
+FF-gain of SRF current control Ki
+F 0 -
+P-gain of SRF voltage control Kv
+P 0.52 -
+I-gain of SRF voltage control Kv
+I 1.16 -
+FF-gain of SRF voltage control Kv
+F 1 -
+PLL proportional gain Ks
+P 0.4 -
+PLL integral gain Ks
+I 4.69 -
+Virtual impedance resistance rv 0.001 p.u.
+Virtual impedance inductance ℓv 0.2 p.u.
+the active power setpoint is adjusted according to the frequency
+mismatch, the droop control in (17) ensures that the power
+output meets its predeﬁned setpoint by adjusting the reference
+frequency and voltage accordingly. Furthermore, such uniform
+structure implies that the same cascaded device-level control
+can be used for both converter modes. Therefore, the proposed
+uniform model can be described by (4)-(5) and (12)-(17) for the
+grid-forming mode and (4)-(5), (7) and (12)-(17) for the grid-
+following mode of operation, resulting in the 14th and 16th-
+order models, respectively. Clearly, the only difference between
+the two models is the presence of PLL dynamics (i.e., controller
+states ε and θs) in the latter one. The most relevant model and
+control tuning parameters are provided in Table I. Note that the
+MATLAB S IMULINK version of the model comprising several
+system-level controls is publicly available [57].
+Authorized licensed use limited to: Cyprus University of Technology. Downloaded on March 18,2021 at 09:27:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+=== PDF PAGE 7 ===
+0885-8950 (c) 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2021.3061434, IEEE
+Transactions on Power Systems 7
+A
+VR
+PSS
+Frequency Control
+Ks
+stab.
+gain
+sTw
+1
++sTw
+washout
+1 +sT1
+1 +sT2
+1 +sT3
+1 +sT4
+phase
+compensation
+1
+1 +sTe
+transducer
+∥·∥2
+norm
+v∗
+g
+Ke
+exciter saturation
+ψd
+aiq
+s−ψq
+aid
+s
+ψd
+f,ψD1,ψQ1,ψQ2
+in
+ternal rotor dynamicselectrical
+torque
+1
+Rg
+dro
+op
+p∗
+g
+1
+1
++sTg
+governor
+Km(1
++sFhTr)
+1
++sTr
+turbine
+1
+sMg +Dg
+swing
+dynamics
+ω0
+1
+s
+in
+ternal
+(dq)-frame
+vt
+Grid
+v2 v3
++
+vs
+edq
+s
+vt
+−
+v1 + vd
+f
+ψdq
+a ,idq
+s
+Rt Lt
+−
+∆p m pg
++
+pm ∆p e
++
+pe←/mapsfromcharτe
+−
++
+∆ωr
++
+ωs θs
+it
+abc
+dq
+Fig. 6. Block diagram of a synchronous generator equipped with a prime mover, a governor and a voltage excitation system. The internal state variables are denoted
+by red color.
+TABLE II
+SYNCHRONOUS GENERATOR PARAMETERS .
+Parameter Symbol Value Unit
+Droop control gain Rg 2 %
+Governor time constant Tg 0.5 s
+Reheat time constant Tr 10 s
+Mechanical power gain factor Km 0.85 -
+Turbine power fraction factor Fh 0.1 -
+Normalized inertia constant Mg 13 s
+Normalized damping factor Dg 1 p.u.
+Transducer time constant Te 0.05 s
+A VR exciter control gain Ke 200 −
+Saturation minimum output V min
+f 0 p.u.
+Saturation maximum output V max
+f 4 p.u.
+PSS stabilization gain Ks 5 -
+Washout time constant Tw 2 s
+1st lead-lag derivative time constant T1 0.25 s
+1st lead-lag delay time constant T2 0.03 s
+2nd lead-lag derivative time constant T3 0.15 s
+2nd lead-lag delay time constant T4 0.015 s
+B. Synchronous Generator Model
+In this paper, we consider a traditional two-pole synchronous
+generator equipped with a prime mover and a governor. Addi-
+tionally, a voltage excitation system comprised of an Automatic
+V oltage Regulator (A VR) and a PSS is incorporated into the
+model. A detailed block diagram of the SG model and its
+control scheme is illustrated in Fig. 6, where the generator is
+connected to the grid through a transformer modeled as a series
+impedance. The complete model is described in an SRF deﬁned
+by generator’s synchronous velocity and expressed in per-unit,
+with the main parameters provided in Table II.
+1) Internal Machine Dynamics: The internal machine dynam-
+ics are characterized by the swing dynamics of the rotor as well
+as the transients in the rotor circuits, as transients in the stator
+windings decay rapidly and can thus be neglected. The swing
+dynamics are traditionally represented by the swing equation
+Mg∆ ˙ωr = ∆pe − Dg∆ωr, (18)
+with Mg ∈ R> 0 and Dg ∈ R> 0 being the normalized inertia
+and damping constants, ∆ωr ∈ R denoting the deviation of
+rotor’s angular velocity from the nominal value, and ∆pe ∈ R
+describing the mismatch between the mechanical power gener-
+ated by the turbine and the electrical power at the SG’s output.
+On the other hand, rotor circuit dynamics originate in the
+armature reaction, i.e., in the effect of the stator ﬁeld on the rotor
+currents, which can be described through ﬂux linkage dynamics:
+˙ψd
+f = ω0rf
+xda,u
+vd
+f − ω0rf
+xf
+(
+ψd
+f − ψd
+a
+)
+, (19a)
+˙ψD1 = − ω0rD1
+xD1
+(
+ψD1 − ψd
+a
+)
+, (19b)
+˙ψQ1 = − ω0rQ1
+xQ1
+(ψQ1 − ψq
+a) , (19c)
+˙ψQ2 = − ω0rQ2
+xQ2
+(ψQ2 − ψq
+a) . (19d)
+Here, subscripts f, D1, Q1 and Q2 stand for the quantities of
+the ﬁeld circuit, d-axis damping circuit and two q-axis damping
+circuits respectively, whereas ψ ∈ R2, r ∈ R>0 and x ∈ R>0
+denote the respective ﬂux linkage, resistance and reactance of a
+circuit. Moreover, vf ∈ R2 is the exciter’s output voltage with
+zero q-component (i.e., ∥vf ∥ = vd
+f ), ω0 ∈ R>0 designates the
+synchronous angular velocity, and xd
+a,u ∈ R>0 stands for the
+unsaturated mutual reactance. Superscripts d and q are omitted
+from damping circuit quantities for simplicity, i.e., ψD1 ∈ R,
+ψQ1 ∈ R and ψQ2 ∈ R. The dq-components of the armature
+ﬂux linkage ψa ∈ R2 are expressed as
+ψd
+a = ˆxd
+a,s
+(
+−id
+s +
+ψd
+f
+xf
++ ψD1
+xD1
+)
+, (20a)
+ψq
+a = ˆxq
+a,s
+(
+−iq
+s + ψQ1
+xQ1
++ ψD1
+xQ2
+)
+, (20b)
+with the subtransient, saturated, mutual reactances ˆxd
+a,s ∈ R>0
+Authorized licensed use limited to: Cyprus University of Technology. Downloaded on March 18,2021 at 09:27:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+=== PDF PAGE 8 ===
+0885-8950 (c) 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2021.3061434, IEEE
+Transactions on Power Systems 8
+and ˆxq
+a,s ∈ R>0 deﬁned by
+ˆxd
+a,s =
+((
+xd
+a,s
+)−1
++ x−1
+f + x−1
+D1
+)−1
+, (20c)
+ˆxq
+a,s =
+((
+xq
+a,s
+)−1
++ x−1
+Q1 + x−1
+Q2
+)−1
+. (20d)
+Finally, the inclusion of stator’s circuit balance completes the
+internal generator model:
+ed
+s = −raid
+s + xliq
+s − ψq
+a, (21a)
+eq
+s = −raiq
+s + xlid
+s − ψd
+a. (21b)
+In (21), stator voltage and current vectors are denoted by es ∈ R2
+and is ∈ R2, while ra ∈ R>0 and xl ∈ R>0 represent the arma-
+ture resistance and leakage reactance respectively. Expressions
+(18)-(21) yield a 6th-order dynamical model described by the
+state vector xint
+g :=
+(
+θs, ωs, ψd
+f , ψD1 , ψQ1 , ψD2
+)
+∈ R6, where
+˙θs = ωbωs. For more details regarding the generator modeling
+and internal parameter computation we refer the reader to [2].
+2) Control Design and Electrical Interface: The proposed
+control scheme comprises two independent loops for frequency
+and voltage regulation [58]. The former one consists of droop
+control and governor and turbine dynamics (see Fig. 6), de-
+scribed respectively by state variables pg ∈ R and pm ∈ R
+(i.e., a state vector xfreq
+g = (p g, pm) ∈ R2). On the other
+hand, voltage control includes an A VR with a transducer and
+a saturated exciter, and a PSS combining a washout ﬁlter and a
+lead-lag phase compensation, with vectors xA VR
+g := v1 ∈ R and
+xPSS
+g := (v 2, v3, vs) ∈ R3 describing the underlying controller
+states respectively. For brevity, we will omit a detailed derivation
+of the control dynamics pertaining to frequency control, A VR and
+PSS, as it can be easily deduced from the control block diagram
+in Fig. 6. Note that all state variables are denoted by red color
+in Fig. 6.
+As mentioned previously, a synchronous generator is inter-
+faced to the grid through a transformer modeled as a series
+impedance rt ∈ R>0 and ℓt ∈ R>0. The dynamics of the current
+it ∈ R2 ﬂowing through a transformer can be expressed in an
+SRF deﬁned by (θs, ωs) as
+˙it = ωb
+ℓt
+(es − vt) −
+(rt
+ℓt
+ωb + jωbωs
+)
+is, (22)
+where vt ∈ R2 denotes the terminal voltage and terminal
+current corresponds to stator current (i.e., is := it). Finally, by
+combining (18)-(22) with the dynamics of frequency and voltage
+control loops, we obtain a 14th-order SG model described by the
+state vector xg =
+(
+xint
+g , xfreq
+g , xA VR
+g , xPSS
+g , it
+)
+∈ R14.
+C. Network and System Modeling
+1) Transmission Network Dynamics: Modeling of the trans-
+mission network is described for a generic system depicted in
+Fig. 7, composed of generators supplying local RL loads and the
+interconnecting transmission lines modeled as π-sections; long
+transmission lines with lengths above 250 km are represented
+by distributed line parameters. In order to establish a consistent
+mathematical formulation, all variables have to be deﬁned within
+a single SRF, including the reference frame of the network.
+Neglecting grid dynamics has been a general assumption for
+SG-dominated power systems, based on the premise of grid and
+and generator’s armature dynamics being much faster than those
+of the excitation and governor systems [59], [60]. Alternatively,
+studies often oversimplify the problem and assume that the grid’s
+vtj vtk
+vtj
+itj
+vnj
+inj
+∠θj↦→∠θ⋆
+vnk
+ink
+vtk
+itk
+∠θ⋆←/mapsfromchar∠θk
+itj
+ilj
+Zlj
+ilk
+Zlk
+icj
+Cj
+Rj
+k Ljkij
+k
+ick
+Ck
+itk
+dq
+dq
+dq
+dq
+Fig. 7. Generic network model with line dynamics and respective dq-frame
+alignment.
+SRF rotates at constant nominal angular velocity, as pointed out
+in [19].
+Let us introduce a transformation fn : Z>0 ↦→ Z>0 that maps
+the set of generator indices g ∈ G ⊂ Z>0 to the subset of nodal
+indices of the network with generator connection j ∈ Ng ⊂ N ,
+with N ⊂ Z>0 being the index set of network nodes. Hence,
+the terminal currents 3 itg ∈ R2 and voltages vtg ∈ R2 of each
+generator unit g ∈ G are mapped to vectors itj ∈ R2 and vtj ∈
+R2 corresponding to the terminal currents and voltages of the
+network nodes j ∈ Ng, where j = fn(g). The nodal vectors
+are subsequently aligned to the SRF of an arbitrary synchronous
+generator or a grid-forming converter r ∈ G , rotating at angular
+speed ω⋆ := ωsr, i.e., ω⋆ := ωcr, as follows:
+xnj = R (θ⋆ − θj) xtj , ∀j ∈ N . (23)
+Here, xnj ∈ {inj , vnj } denotes the “nodal” metrics described in
+the nominal reference frame, the uniform SRF angle is computed
+as ˙θ⋆ = ωbω⋆, and θj ∈ [−π, π) corresponds to the internal SRF
+angle of the respective unit, i.e., θj := θsj for the synchronous
+and θj := θcj for the converter-based generator. According to
+[59], [61], such approach provides a good trade-off between the
+computational complexity and model accuracy.
+The nodal voltage and current dynamics can now be expressed
+∀j ∈ N as
+˙vnj = ωb
+clj
+icj − jωbω⋆vnj , (24a)
+˙ilj = ωb
+ℓlj
+vnj −
+(rlj
+ℓlj
+ωb + jωbω⋆
+)
+ilj , (24b)
+thus capturing the load and shunt phenomena at each node,
+with rlj ∈ R>0 and ℓlj ∈ R>0 being the load’s resistance
+and inductance, and cj ∈ R>0 reﬂecting the aggregate shunt
+capacitance. Finally, the line dynamics are represented using a
+conventional RL circuit formulation
+˙ij
+k = ωb
+ℓj
+k
+(vnj − vnk) −
+(
+rjk
+ℓj
+k
+ωb + jωbω⋆
+)
+ijk , ∀j ∈ N , k ∈ Kj,
+(25)
+with ij
+k ∈ R2 being the current and (rjk , ℓjk) ∈ R2
+>0 the
+respective parameters of a transmission line connecting nodes
+j ∈ N and k ∈ K j, and Kj ⊂ N denoting the subset of
+nodes adjacent to node j. Combining (23)-(25) with the algebraic
+expressions for current balance at each node j ∈ N in the system
+concludes the network model.
+3Note that the terminal currents correspond to stator currents is of SGs (see
+Fig. 6) or to grid injection currents ig of VSCs (see Fig. 5).
+Authorized licensed use limited to: Cyprus University of Technology. Downloaded on March 18,2021 at 09:27:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+=== PDF PAGE 9 ===
+0885-8950 (c) 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2021.3061434, IEEE
+Transactions on Power Systems 9
+2) Complete Model F ormulation: Having deﬁned models of
+different generation units and the network, we can complete the
+general ODE formulation of the system. Let us consider a large-
+scale, low-inertia system with nodal and generation index sets
+N and G deﬁned previously. Furthermore, let S ⊂ Z>0 and
+C ⊂ Z>0 (S ∪ C = G) be the index sets of synchronous and
+converter-interfaced generators, with the second set differenti-
+ating between the subsets CF ⊂ C and Cf ⊂ C of grid-forming
+and grid-following units, respectively. Furthermore, let B ⊂ Z>0
+denote the index set of network branches, where elements of the
+branch current vector ib ∈ R|B| are mapped to the currents ijk
+in (25) using the transformation fi : Z2
+>0 ↦→ Z>0 such that
+∀j ∈ N , ∀k ∈ Kj, ∃m ∈ B | m = fi(j, k) ∧ ibm := ijk.
+The dynamical model of such system can be expressed by
+˙x = f(x, u), (26a)
+where
+x =
+(
+xF
+c1 , . . . , xF
+c|CF| , xf
+c1 , . . . , xf
+c|Cf| , xg1 , . . . , xg|S| , xn
+)
+,
+(26b)
+u =
+(
+uF
+c1 , . . . , uF
+c|CF| , uf
+c1 , . . . , uf
+c|Cf| , ug|S|
+)
+. (26c)
+The state and control input vectors of grid-forming and grid-
+following converters (denoted by superscripts F and f respec-
+tively) in (26b)-(26c) are deﬁned ∀p ∈ C F and ∀q ∈ C f as
+xF
+cp = (if , vf , ig, ξ, γ, χ, ˜pc, ˜qc, θc) ∈ R14, (26d)
+xf
+cq = (if , vf , ig, ξ, γ, χ, ε, θs, ˜pc, ˜qc, θc) ∈ R16, (26e)
+uF
+cp = (p⋆
+c , q⋆
+c , V⋆
+c , ω⋆
+c , v⋆
+dc) ∈ R5, (26f)
+uf
+cq = (p⋆
+c , q⋆
+c , v⋆
+dc) ∈ R3. (26g)
+Moreover, the SGs in (26b)-(26c) are described ∀r ∈ S by
+xgr =
+(
+θs,
+ωs, ψd
+f , ψD1 , ψQ1 , ψD2 , is, v1, v2, v3, vs, pg, pm
+)
+∈ R14,
+(26h)
+ugr =
+(
+p⋆
+g,
+v⋆
+g
+)
+∈ R2, (26i)
+and the state vector of network dynamics is expressed in the
+form
+xn =
+(
+vn1 ,
+. . . , vn|N| , il1 , . . . , il|N| , ib1 , . . . , ib|B|
+)
+∈ R4|N|+2|B|.
+(26j)
+The
+ﬁnal model order is therefore N = 14|CF|+16|C f |+14|S| +
+4|N | + 2|B|, whereas the control input vector comprises M =
+5|CF| + 3|Cf | + 2|S| setpoints.
+The nonlinear ODE model (26) can also be represented in a
+linear form
+∆ ˙x = A∆x + B∆u (27)
+by linearizing (26a) around the steady-state point (x0, u0), with
+A ∈ RN×N and B ∈ RN×M being the state-space matrices, and
+∆ denoting small deviations around the equilibrium (x0, u0).
+Nevertheless, while providing accurate dynamical representation
+of the system, such linear model also leads to a minor steady-
+state error compared to its nonlinear counterpart. The mismatch
+can be seen in Fig. 8, showcasing a time-domain response of a
+two-generator system after a step increase in load demand. The
+steady-state error arises due to the linearization of the alignment,
+i.e., the approximation of trigonometric terms within the rotation
+matrix R(·) in (23). This also explains why power, and hence the
+frequency, experience the highest mismatch, as they cumulatively
+absorb the errors pertaining to alignment of each individual
+voltage and current vector. Note that for a global SRF rotating at
+Fig. 8. Time-domain performance of nonlinear and linear model representation
+of a two-generator system after a load step change.
+constant angular velocity ω⋆, the formulation (27) is not feasible,
+i.e., the obtained linear model is unstable. This is again justiﬁed
+by the linearization of (23), which cannot accurately capture the
+alignment.
+III. T IMESCALES IN LOW-I NERTIA SYSTEMS
+The overall complexity of dynamics pertaining to low-inertia
+systems is well described through characteristic timescales il-
+lustrated in Fig. 9. Conventional power systems based on syn-
+chronous generators have a distinct difference in time constants
+for frequency and voltage regulation, with turbines (Tr ≈ 10 s)
+and governors (Tg ≈ 1 s) operating on much longer timescales
+than the exciter (Te ≈ 50 ms) [58]. Moreover, swing and
+ﬂux dynamics reﬂect the time constants of the swing equation
+and synchronous machine ﬂux linkages, respectively. Consid-
+ering that the time constants of the line dynamics vary in the
+Tℓ ∈ [1 − 30] ms range, depending on the network type, it is
+clear that the conventional control schemes would ensure system
+stability. However, with the inclusion of fast-acting converter-
+based generation, the system dynamics become more complex
+and convoluted and may lead to unexpected couplings [1].
+For instance, the traditional assumption of neglecting fast line
+dynamics is not valid anymore, since the underlying dynamics
+are of the same order of magnitude as the ones of converter
+voltage control. On the other hand, the time constants of the
+PI controllers and low-pass ﬁlters associated with the inner and
+outer inverter control loops are one or two orders of magnitude
+smaller than the ones of the synchronous machines, potentially
+resulting in adverse control interference and instability, espe-
+cially with high shares of renewables. Moreover, the time delays
+associated with Wide Area Monitoring Systems (W AMS) would
+make any type of emergency regulation without the use of high-
+speed ﬁbre optics obsolete [62].
+It should be noted that by voltage and frequency dynamics
+in Fig. 9 we refer to the controllers associated with voltage
+and frequency regulation, respectively. While somewhat related,
+these notions are not in direct correlation with the traditional
+voltage and frequency stability terms [63], especially considering
+the complex dynamics of low-inertia systems and a timescale
+separation between the controls of different unit types regulating
+the same system metric (voltage magnitude or frequency).
+Authorized licensed use limited to: Cyprus University of Technology. Downloaded on March 18,2021 at 09:27:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+=== PDF PAGE 10 ===
+0885-8950 (c) 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2021.3061434, IEEE
+Transactions on Power Systems 10
+< 1 ms 1 ms 10 ms 100 ms 1 s 10 s T
+VSCf
+VSCF
+SG
+Grid
+PWM Harmonics DC SRF inner control APC
+& RPCPLL
+PWM Harmonics DC SRF inner control
+curren
+t voltage
+APC
+& RPC
+A VR & PSS Flux Go
+vernor
+T
+urbine
+Swing
+dynam.
+Fibre
+optic network Network line dynamics W AMS
+distribution transmission
+frequency
+dynamicsv
+oltage dynamicssignal
+processing
+Fig. 9. Characteristic timescales of different physical and control dynamics in a low-inertia system.
+We also note that the impact of network line dynamics
+becomes more profound in inertialess systems. Its effect on
+frequency stability can be illustrated by analyzing a uniform
+frequency control loop of an individual grid-forming inverter
+connected to k ∈ Kj adjacent inverter units as follows:
+τz ¨θcj +
+(
+1 − ωbRp
+c B′
+j
+)˙θcj + ωbRp
+c Bjθcj + Cj = 0, (28)
+with (ωc, θc) denoting the converter frequency and phase angle,
+Rp
+c being the active power droop, ωb representing the base
+frequency, Cj = ωbω⋆
+cj + ωbRp
+c p⋆
+cj , and
+Bj =
+∑
+k∈Kj
+ω0ℓjk
+ωb
+(
+r2
+jk + ω2
+0ℓ2
+jk
+)2 , B ′
+j =
+∑
+k∈Kj
+2rjk ℓ2
+jk
+ωb
+(
+r2
+jk + ω2
+0ℓ2
+jk
+)2 .
+Here, ω0 is the nominal per-unit frequency and (rjk , ℓjk) denote
+the resistance and inductance of the transmission line between
+nodes j and k. The analytical derivation is omitted for brevity.
+We also note that the impact of network line dynamics
+becomes more profound in inertialess systems. Its effect on
+frequency stability can be illustrated by analyzing a general
+frequency control loop of an individual grid-forming inverter
+j ∈ Ng connected to |Kj| VSC units k ∈ Kj adjacent to inverter
+j, as follows:
+τz ¨θcj +
+(
+1 − ωbRp
+c B′
+j
+)˙θcj + ωbRp
+c Bjθcj + Cj = 0, (29)
+with Cj = ωbω⋆
+cj + ωbRp
+c p⋆
+cj and
+Bj = ∑
+k∈Kj
+ω0ℓj
+k
+ωb(r2
+j
+k+ω2
+0ℓ2
+jk)
+2 , B′
+j = ∑
+k∈Kj
+2rjkℓ2
+jk
+ωb(r2
+j
+k+ω2
+0ℓ2
+jk)
+2 .
+The
+derivation of underlying expressions is provided in Ap-
+pendix B.
+In order to preserve system synchronization, the natural nega-
+tive feedback terms for θcj and ˙θcj must be positive, indicating
+an upper limit on the active power droop gain Rp
+c < (ωbB′
+j)−1.
+Such threshold is even more restrictive for distribution networks,
+due to shorter node distances and a lower ℓjk /rjk line impedance
+ratio. Furthermore, the impact of the power network also pertains
+to inverter synchronization through θcj term, since very high
+feedback control gains κj = ωbRp
+c Bj might lead to inverter
+frequency oscillations exciting the oscillatory modes of the trans-
+mission lines. In other words, the inverters achieve synchroniza-
+tion by inferring information about the phase angle differences
+through local measurements of currents and voltages. Therefore,
+the time constant of transmission lines can be interpreted as
+a propagation delay of the information on the phase angles,
+and the controllers cannot act faster than the time needed to
+observe information through the network. Hence, larger time
+constants require a lower feedback gain, which implies that
+reducing transmission line impedance ratio or increasing network
+connectivity can make a low-inertia system unstable. Similar
+remarks have been pointed out for microgrids comprising solely
+inverters based on droop [64] and dispatchable virtual oscillator
+control [65]. While we only focus on frequency dynamics in this
+example, it should be noted that the voltage dynamics could also
+be assessed using the proposed approach, as indicated in [64]–
+[66].
+IV. S TABILITY PROPERTIES OF A SMALL SYSTEM
+A. Unit Interactions in a 2-bus Test System
+For the ﬁrst case study, we consider a simple 2-bus system
+with two generators connected over a transmission line and
+an RL load supplied at one node. The goal is to incorporate
+different units into the system and investigate their dynamic
+interactions and the respective stability margins. In order to
+conﬁne the observed phenomena solely to the generators under
+study, the transmission line dynamics are neglected at this point,
+i.e., line connections are represented only by algebraic equations.
+We investigate three different scenarios based on the generator
+type conﬁguration: (i) a synchronous generator and a grid-
+following VSC; (ii) a synchronous generator and a grid-forming
+VSC; and (iii) a grid-forming and a grid-following VSC. Fur-
+thermore, we introduce a penetration ratio η, which describes the
+installed penetration level of inverter-based units. In the ﬁrst two
+cases this corresponds to η = pc/(pg + pc), whereas in the last
+scenario this factor denotes the penetration of the grid-following
+generation, i.e., η = pcf /(pcF + pcf ), with subscripts F and
+f representing the grid-forming and grid-following converters
+respectively. Note that all generators operate at 50 % of the
+installed capacity, i.e., p⋆ = 0.5 p.u.
+The small-signal stability margins of different system conﬁg-
+urations are illustrated in Fig. 10, where the stability is assessed
+through real-part movement of the most critical eigenvalue ˆλ.
+Understandably, the system comprising both synchronous gen-
+erators and grid-forming inverters can withstand higher levels
+of PE-based devices (≈ 79%), as the voltage phasors at both
+nodes are fully established and controlled by the local generators.
+Additionally, the synchronization and power sharing properties
+are inherently provided by both units. On the other hand, the
+penetration of grid-following generation adversely affects the
+system balance, and signiﬁcantly reduces the maximum admis-
+sible ratio to ηmax ≈ 60 % and ηmax ≈ 59 % for Scenarios I and
+III, respectively. Scenario III also has a steeper progression of ˆλ,
+Authorized licensed use limited to: Cyprus University of Technology. Downloaded on March 18,2021 at 09:27:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+=== PDF PAGE 11 ===
+0885-8950 (c) 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2021.3061434, IEEE
+Transactions on Power Systems 11
+indicating that it is difﬁcult to achieve a noticeable improvement
+of the critical penetration ratio.
+As a second step, we thoroughly explore the fundamental
+components contributing to the aforementioned instability. This
+is achieved by determining the critical modes of the system, em-
+ploying participation factor and parameter sensitivity analyses,
+and determining the states (i.e., the controllers) that predomi-
+nantly contribute to such modes. Each of the proposed scenarios
+comprises a unique ODE system with speciﬁc dynamics. There-
+fore, all three system conﬁgurations are individually investigated
+and discussed in detail below:
+1) Scenario I: It is observed that the inverter penetration
+above 60 % leads to system collapse. Interestingly, the instability
+initially originates in the voltage dynamics due to incompatibility
+of the VSC inner control loop and the generator’s PSS, as
+illustrated in Fig. 11. Subsequently, the vulnerability spreads
+across the whole excitation system, including the A VR. At this
+point the system is heavily unstable. This phenomena comes
+from the time constants of the inner loops being drastically
+smaller than the ones of the exciter. More speciﬁcally, once
+the system becomes predominantly PE-based the “non-forming”
+aspect of the inverter’s voltage phasor counteracts and diminishes
+the ﬁrm voltage at the SG terminal, thus weakening the system.
+For even higher VSC penetration levels (> 75 %) the network
+faces frequency stability issues, as the PLL, and subsequently the
+active power controller, cannot provide adequate synchronization
+of the grid-following units due to an insufﬁciently stiff global
+frequency signal.
+By studying the movement of the critical eigenvalue spectrum
+in Fig. 11 we notice that the real part ℜ(ˆλ) signiﬁcantly
+increases for inverter shares above 68 %. Considering that PSS
+and inner SRF controllers largely participate in critical modes for
+η ∈ [60, 68] %, one can assume that tuning the respective control
+gains could restore system stability within this range. While
+the increase in PSS stabilization gain proves to be relatively
+beneﬁcial for the system, the adjustment of inner loop PI
+controllers has no impact on the eigenvalue spectrum, as shown
+in Fig. 12. This is an expected outcome due to a large timescale
+separation between the two feedback loops, which in turn hinders
+the synchronous generation from providing a stiff voltage at
+the terminal. Furthermore, inner converter control loops are
+often predeﬁned by the manufacturer and optimally designed for
+providing fast and accurate voltage and power reference tracking,
+implying that any parameter changes would distort its original
+purpose and effectiveness.
+Beside the SG voltage regulators, the dynamics of the swing
+equation also prove to be relevant to a certain extent for the
+10 20 30 40 50 60 70 80 90
+0
+5
+10
+η [%]
+ℜ(ˆλ)
+Scenario
+I
+Scenario
+II
+Scenario
+III
+10 20 30 40 50 60 70 80 90
+0
+5
+10
+η [%]
+ℜ(ˆλ)
+Scenario
+I
+Scenario
+II
+Scenario
+III
+Fig. 10. Impact of inverter penetration on system stability for different unit
+conﬁguration.
+Fig. 11. Impact of different controllers on system stability under high grid-
+following inverter penetration in Scenario I.
+overall stability. However, in contrast to the popular belief
+that low inertia levels lead to vulnerability, it is in fact the
+insufﬁcient damping that propagates the problem. Similar to the
+PSS stabilization gain, the higher damping constant facilitates
+the integration of converters (see Fig. 12), whereas the inertia
+constant has no impact on the overall penetration; an observation
+that was also made in [40]. Nonetheless, damping is related
+to physical properties of synchronous generators, while droop
+gains, essentially corresponding to damping, are prescribed
+within narrow ranges by the grid codes. This suggests that the
+most viable and practical solution would be to improve the PSS
+design, i.e., increase its responsiveness, in order to accommodate
+a high penetration of grid-following inverter-based generation.
+2) Scenario II: The issues pertaining to timescale separation
+between different voltage controllers already highlighted in the
+previous scenario remain also in this scenario. It can be noticed
+that the “forming” inverter property bolsters the voltage vector at
+the respective bus and drastically improves the stability margin
+of the system. Nonetheless, for η > 78 % the A VR and PSS
+controllers cannot achieve adequate voltage stabilization, as the
+eigenvalues depicted in Fig. 13 are located deeply into the right-
+hand side of the root loci spectrum. Hence, the maximum feasible
+penetration of VSCs can hardly be improved. Another important
+observation is that the frequency dynamics are not contributing
+to instability anymore, since both units independently establish
+an adequate frequency signal and subsequently synchronize.
+Fig.
+12. Stability maps in Ks−η andDg−η planes indicating the effect of PSS
+stabilization gain and SG damping on admissible penetration of grid-following
+inverter units in Scenario I.
+Authorized licensed use limited to: Cyprus University of Technology. Downloaded on March 18,2021 at 09:27:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+=== PDF PAGE 12 ===
+0885-8950 (c) 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2021.3061434, IEEE
+Transactions on Power Systems 12
+Fig. 13. Impact of different controllers on system stability under high grid-
+forming inverter penetration in Scenario II.
+Fig. 14. Impact of different controllers on system stability under high grid-
+following inverter penetration in Scenario III.
+3) Scenario III: We tackle the 100 % PE-based scenario by
+increasing the share of grid-following units (i.e., by increasing
+Fig. 15. Stability map in the Kpll
+p −η plane indicating the effect of propor-
+tional PLL gain on admissible penetration of grid-following inverter units in
+Scenario III.
+factor η), with the results presented in Fig. 14. The main
+distinction of this scenario is the elimination of voltage control
+issues in the presence of SGs and inverters, as both VSCs
+regulate voltage on the same timescale. In spite of improving the
+voltage dynamics in the system, the synchronization problems
+are aggravated due to an exclusion of a synchronous generator.
+In other words, the dedicated “forming” capability of a grid-
+forming converter is inferior to the one of a traditional generator.
+As a result, for penetration levels above ≈ 59 % the PLL units
+of grid-following inverters cannot accurately estimate the fre-
+quency signal, leading to failure in the active power control and
+preventing system-level synchronization. Similar properties are
+also reﬂected when analyzing η as a function of the proportional
+PLL gain, with a more responsive PLL potentially facilitating a
+higher penetration factor (see Fig. 15). However, this approach
+does not solve the fundamental problem at hand, and provides
+only a marginal improvement of a few percent. It should be
+noted that the integral gain of the respective PI controller does
+not affect the system stability margin, indicating that the original
+PLL time constant could be maintained in the process.
+B. Inclusion of Transmission Line Dynamics
+We broaden the scope of our analysis by including the
+transmission line dynamics. The same three scenarios are re-
+evaluated and compared against the previous case study, with the
+respective results illustrated in Fig. 16. A noticeable difference
+in the stability margin of a 100 % inverter-based system can
+be observed, where the inclusion of line dynamics signiﬁcantly
+increases the maximum penetration ratio η. This can be explained
+by the inductive and capacitive components of the lines acting as
+energy buffers and augmenting the synchronization between the
+two units. More precisely, the frequency issues associated with a
+large proportion of PLL-based generation are alleviated through
+interactions with the LC segments of the transmission lines,
+which slows down the frequency dynamics and enables the grid-
+following VSCs to more accurately detect the weak frequency
+signal. Similar conclusions have been drawn for autonomous
+microgrids [67] and networks comprised of a speciﬁc class of
+grid-forming inverters [65], as well as in [3] using a mechanical
+analogue of swings in a multi-machine system.
+On the other hand, the scenarios experiencing instability
+related to voltage dynamics are for the most part unaffected by
+the transmission line dynamics. The voltage control interaction
+between the synchronous and PE-based generation is somewhat
+mitigated, due to the time constants of the line dynamics and the
+SRF inner control loops being of the same order of magnitude.
+Fig. 16. Impact of inverter penetration on system stability for different unit
+conﬁguration, with inclusion of transmission line dynamics. Transparent dashed
+lines indicate results for scenarios without line dynamics from Fig. 10.
+Authorized licensed use limited to: Cyprus University of Technology. Downloaded on March 18,2021 at 09:27:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+=== PDF PAGE 13 ===
+0885-8950 (c) 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2021.3061434, IEEE
+Transactions on Power Systems 13
+However, the line dynamics do not have any impact on the slower
+modes associated with the synchronous machines. Therefore,
+the stability in Scenario I cannot be preserved for the grid-
+following penetration above 70 %, as it is associated solely with
+the A VR and PSS control design. The predominant impact of
+SGs on system stability is even higher in Scenario II, with grid-
+forming inverters only marginally affecting the critical modes
+within a narrow range of η ∈ [78, 79] %. Hence, the maximum
+admissible VSC penetration after the inclusion of transmission
+line dynamics remains the same in this case.
+As a mean of model validation, we investigate the same 2-
+bus test case comprised only of synchronous generators or grid-
+forming converters. Understandably, networks with such homo-
+geneous conﬁgurations of generators with standalone capabilities
+face no stability problems under any ratio of installed powers
+between the two units. Therefore, these results are not included
+in Fig. 16 for simplicity, nor will the respective scenarios be
+discussed in the remainder of the study.
+C. Impact of System Operating Point
+In addition to the total installed capacity of PE-interfaced
+generation, the actual dispatch (i.e., operating power setpoints)
+of converter-based units can have a detrimental effect on small-
+signal stability. In fact, it can completely change the nature of the
+unstable modes and the controllers contributing to such modes
+and instability. One such example is illustrated in Fig. 17, depict-
+ing a root loci spectrum of the system from Scenario II. The SG
+and grid-forming VSC have identical installed power capacities,
+suggesting that η = 0.5. Note that for such conﬁguration and
+p⋆
+g = p⋆
+c = 0 .5 p.u., the system in Scenario II is stable (see
+Fig. 10). The original unit dispatch (set at 50 % for each unit)
+is modiﬁed by gradually changing the power setpoints while
+holding the total generation output constant, which corresponds
+to redistribution of the load demand between the two generators.
+Under SG-dominated operation the most critical mode (de-
+noted by blue-edged squares in Fig. 17) is associated with
+voltage control dynamics. This is also identiﬁed as the same
+−40 −30 −20 −10 0
+−10
+0
+10
+ℑ(λ)
+p⋆
+c =
+0.2
+p⋆
+c =
+0.3
+p⋆
+c =
+0.4
+p⋆
+c =
+0.5
+p⋆
+c =
+0.6
+p⋆
+c =
+0.7
+p⋆
+c =
+0.8
+−0.1−0.08−0.06−0.04−0.020 0.02
+−1
+0
+1 frequency ctrl. λ (diamonds)
+voltage ctrl. λ (squares)
+ℜ(λ)
+ℑ(λ)
+Fig.
+17. Root loci spectrum of interest for different system operating points:
+general mode movement (top) and the most critical modes (bottom). In the
+bottom ﬁgure, the edge color of the mode corresponds to the color of the
+respective arrow indicating the direction of the movement. The size of the symbol
+scales down with the increase in converter power setpoint p⋆
+c.
+mode becoming unstable for increased installed VSC capac-
+ity, previously pointed out in Section IV-A. However, when
+increasing the converter dispatch point p⋆
+c, the aforementioned
+mode moves to the left-hand side (indicated by the blue arrow),
+whereas another mode (denoted by red-edged diamonds) shifts
+to the right-hand side (indicated by the red arrow) and eventually
+becomes unstable for p⋆
+c > 0.7 p.u. An interesting observation is
+that the instability arises from synchronization issues, i.e., it is a
+consequence of adverse interactions between the two frequency
+controllers. Such ﬁnding conﬁrms a very complex nature of
+potentially unstable modes in a PE-dominated power system,
+and implies that a single metric of inverter penetration might
+not be sufﬁcient to prescribe reliable stability margins. Another
+insightful remark can be made regarding the nature of the most
+critical modes, as they all have zero imaginary part. This implies
+that the underlying instability is not oscillatory, and one should
+not be thinking of “fast” and “slow” second-order dynamics but
+rather of just ﬁrst-order dynamics when referring to these modes.
+V. S TABILITY ANALYSES OF LARGER SYSTEMS
+A. Stability Margins of the IEEE 9-bus System
+In order to investigate the simultaneous interactions between
+all three unit types, as well as to increase the network complexity,
+the IEEE 9-bus system given in Fig. 18 is considered in this
+case study. A grid-following VSC is placed at node 2 and a
+grid-forming VSC at node 3. The transmission line dynamics
+are included throughout the remainder of the study.
+The stability mapping for the IEEE 9-bus system is shown in
+Fig. 19, considering also different levels of network connectivity.
+Each triangular axis denotes a penetration of the respective unit
+type, more precisely ηSG refers to synchronous generators, ηF
+to grid-forming and ηf to grid-following inverter-based units;
+colored areas indicate a predominant penetration (≥ 50 %) of
+a single generation type. It should be noted that the system
+is always comprised of three generation units, i.e., axes points
+indicating a 0 % penetration of a single generator type are
+not considered, and the individual penetration levels are varied
+in discrete steps of 1 %. We modify the original system by
+gradually adding transmission lines, ﬁrst between the generator
+buses and subsequently between the load buses, as indicated
+by the red and blue lines in Fig. 18 respectively. Such proce-
+dure allows us to increase the network connectivity, deﬁned as
+3 6 7 8 2
+5 9
+4
+1
+Fig.
+18. Network diagram of the IEEE 9-bus system. The blue and red lines
+indicate the additionally incorporated transmission lines.
+Authorized licensed use limited to: Cyprus University of Technology. Downloaded on March 18,2021 at 09:27:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+=== PDF PAGE 14 ===
+0885-8950 (c) 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2021.3061434, IEEE
+Transactions on Power Systems 14
+Fig. 19. Stability mapping for the IEEE 9-bus test case under different levels of
+network connectivity. Colored arrows indicate the appropriate reading direction
+on the respective axes.
+εg = 2Nb/(N 2
+n − Nn), from 40 % in the original model to 60 %
+and 80 % in the modiﬁed system.
+Fig. 19 suggests that, for the generator conﬁguration in this test
+case, system stability cannot be maintained with less than 47 %
+synchronous generation. Reducing connectivity (in particular by
+removing network connections between generator buses) makes
+the system even more reliant on synchronous generation. It
+is clear that stability erodes at high VSC penetration levels
+independent of the grid-forming share, which is consistent with
+our previous ﬁndings in Section IV-A. Interestingly, the permis-
+sible converter installation margin signiﬁcantly reduces when
+the ηF /ηf ratio diverges from 1, as the maximum value of
+η = ηF + ηf drops from 44 % to 27 % in case of ηF ≈ 0 % or
+ηf ≈ 0 %. This is due to different instabilities occurring between
+various unit types, speciﬁcally voltage issues for a system com-
+prised of synchronous and inverter-based generators (Scenarios I
+and II) and synchronization obstacles related to a 100 % PE-
+based system (Scenario III), as described in Section IV-A. For a
+rather balanced portfolio, all of these problems are somewhat
+conﬁned within reasonable limits, while an imbalance in the
+ηF /ηf ratio tends to emphasize the voltage dynamics issues and
+endanger the whole network. Another valid point can be made
+regarding the beneﬁcial impact of transmission line dynamics.
+As previously indicated in Section IV-B, a direct connection
+between units experiencing frequency instability mitigates the
+synchronization issues, thus facilitating a higher share of PE-
+based devices. Nonetheless, this is not the case for transmission
+lines between the load nodes, as increasing connectivity from
+60 % to 80 % has a negligible impact on the stability margin.
+We extend this analysis by differentiating between three
+different generation portfolios: (i) P0 - a mix of all three unit
+types, as previously discussed; (ii) Pf - a system comprised
+only of synchronous generators and grid-following VSCs; and
+(iii) PF - a system comprised only of synchronous generators
+and grid-forming VSCs; in the latter two cases the portfolio
+consists of two synchronous and one inverter-based generator,
+i.e., one of the VSCs from the original portfolio P0 is replaced
+by SG, whereas the total inverter penetration ratio is equal to
+either ηf or ηF . The results for the IEEE 9-bus system presented
+in Fig. 20 suggest that more homogeneous portfolios, such as
+Pf and PF , can withstand drastically higher penetrations of
+renewables, with ηmax reaching up to 75 % and 82 % respectively.
+Understandably, portfolio PF has a higher η margin due to
+P0 Pf PF
+40
+60
+80
+100
+44
+75
+82
+53
+86 86
+52
+88 88
+ηmax [%]
+εg =
+40 %
+εg =
+60 %
+εg =
+80 %
+Fig. 20. Maximum permissible inverter penetration under different system
+portfolios (P) and levels of network connectivity (εg).
+less accentuated voltage instability compared to the Pf sce-
+nario. However, increasing network connectivity balances these
+penetration ratios out, as direct transmission line connections
+resolve the timescale separation between the voltage controllers
+of synchronous and converter-based generators (see Fig. 9). As
+a result, the system can facilitate up to ηmax = 88 % of PE-
+interfaced units; an increase of approximately 70 % compared to
+the original portfolio P0.
+Alternatively, a different conﬁguration with a less heteroge-
+neous portfolio comprised of two grid-forming and one grid-
+following inverter is investigated. For higher levels of network
+connectivity the system faces no stability issues under any share
+of installed powers, whereas in case of εg = 40 % the maximum
+permissible penetration of grid-following generation is 93 %.
+This highlights the fact that the small-signal stability of low-
+inertia systems is drastically more vulnerable compared to the
+one of 100 % PE-based systems.
+B. Stability Characteristics of South-East Australian Network
+Having gained fundamental understanding of dynamic inter-
+actions between different types of generators in a simplistic test
+environment, we extend the analysis to a 14-generator, 59-bus
+South-East Australian system [68], [69] shown in Fig. 21. This
+network represents a long, linear system as opposed to the more
+tightly meshed networks found in Europe and the United States.
+For convenience, it has been divided into 5 areas, with areas 1
+and 2 being closely electrically coupled. Therefore, there are
+in essence 4 main regions, namely South Australia (area 5),
+Queensland (area 4), Victoria (area 3) and New South Wales
+(subsuming areas 1 and 2), and hence 3 inter-area modes are
+present. Beside its string topology, the system is characterized
+by the weak coupling between South Australia and the rest of
+the system. The model employed in this work considers the light
+loading scenario provided in [69], [70].
+Moreover, for the purpose of this work, the model presented in
+[70] was modiﬁed to obtain a low-inertia case study by replacing
+synchronous generators located at buses 101, 202, 301, 302,
+501, 502 and 503 by grid-following VSCs of identical power
+rating. In addition, we install 4 more grid-following units, two
+in each of the area 2 and 3, at nodes 212 and 214, i.e., 308 and
+314 respectively. This yields a total of 11 converter-interfaced
+generators operating in grid-following mode and 7 conventional
+SGs, representing the default test case for our analysis. Such
+modeling choice is based on the high penetration of renewable
+generation in the real-world system, particularly in area 5, that
+does not provide standalone frequency support [71], [72]. Note
+that the default test case comprises all-inverter-based areas 5,
+Authorized licensed use limited to: Cyprus University of Technology. Downloaded on March 18,2021 at 09:27:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+=== PDF PAGE 15 ===
+0885-8950 (c) 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2021.3061434, IEEE
+Transactions on Power Systems 15
+South
+Australia
+New
+South Wales
+Queensland
+Victoria
+406
+407403
+408402
+410401
+404
+405
+409
+411
+412
+413
+414
+415
+416
+VSC
+VSC
+VSC
+VSC
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+102
+101
+VSCVSC
+VSC
+VSC
+301
+302
+303304
+305
+306
+307308
+309
+310311
+312
+313
+314
+315
+VSC
+VSC
+VSC
+501
+502
+503
+504
+505
+506
+507
+508
+509
+Fig. 21. Modiﬁed South-East Australian power system line diagram (default
+conﬁguration in Scenario 1).
+3 and 1, corresponding to South Australia, Victoria and the far
+south region of New South Wales.
+In the following step, we analyze the stability margins of
+the South-East Australian network for 33 different conﬁguration
+scenarios categorized into 6 groups, as listed in Fig. 21a. The ﬁrst
+set of 8 scenarios (G 1), including the default setup in Scenario 1,
+is generated by successively replacing one of the existing SGs
+in Queensland and New South Wales (areas 2 and 4) of the
+default case by an equivalent grid-following inverter. Similarly,
+set G2 considers 6 scenarios where two of the aforementioned
+SGs are simultaneously converted into converter-interfaced units.
+In contrast, G3 restores South Australia to its original condition
+(i.e., makes area 5 SG-based) and presents 9 scenarios with a
+substantially higher level of inverter penetration in areas 2 and 4,
+with Scenario 23 only having one SG in Queensland and New
+South Wales combined. The two scenarios in G4 are the only
+instances with grid-forming VSC installation and represent 100%
+inverter-based conﬁgurations, whereas sets G5 and G6 restore
+original synchronous generation in areas 1, 3 and 5 and study
+the impact of PE-based generators in areas 2 and 4. The main
+distinction between the latter two sets is the substantially higher
+inverter penetration in the second case.
+By closely studying the inverter penetration levels and system
+conﬁgurations4 in Fig. 21, we can make several insightful
+observations that validate the claims raised in Section IV and
+Section V-A. First of all, there is a clear upper bound on the level
+of grid-following inverter penetration that a traditional power
+system can withstand. For sets G1 and G2 this limit corresponds
+to ηmax ∈ [60 − 70] %, while for G3, G5 and G6 the maximum
+permissible penetration increases to ηmax ∈ [60 − 70] %. Under-
+standably, the network conﬁguration and unit placement play an
+important role. This justiﬁes the lower VSC installation margins
+for former scenarios (sets G1 and G2) where South Australia (area
+5) is inverter-based, since the electrical distances between the
+synchronous and inverter-interfaced generation are the longest
+and hence the system is more vulnerable. We also showcase
+that the operator should not aim at enforcing a single margin
+for maximum VSC penetration, as Scenario 22 is stable for
+η = 78.5 % while Scenario 2 is unstable for η = 62 %; again,
+solely due to the outline of the system and placement of the
+grid-following VSCs in the network.
+Finally, we validate the notion that an all-inverter network is
+signiﬁcantly less prone to instability, as Scenario 24 can with-
+stand a share of ≈ 92 % grid-following inverters while having
+only two grid-forming units in the grid. However, removing one
+of those grid-forming converters leads to frequency instability
+(Scenario 25). Note that in Scenario 24, the grid-forming VSCs
+are placed at the end nodes of the system (node 501 in South
+Australia and node 404 in Queensland), thus capable of covering
+wide areas affected by their “forming” property and facilitating
+a high grid-following inverter penetration. By replacing the
+grid-forming unit at node 404 with a grid-following one, the
+electrical distance between this converter and the grid-forming
+VSC in South Australia becomes too large and the system cannot
+preserve small-signal stability. We can therefore conclude that
+the problem of placement of grid-forming inverters in a low-
+inertia system could be of high importance in the future. This
+topic is addressed in [72]–[74].
+VI. C ONCLUSION
+The presented paper employs a high-ﬁdelity ODE formula-
+tion of a low-inertia system with detailed control schemes of
+both synchronous and converter-based generators, as well as
+the dynamics of loads and transmission lines. Using modal
+analysis techniques we expose the most vulnerable segments of
+the system under different penetration levels of inverter-based
+units, various generation portfolios and system operating points,
+and investigate the adverse effects of the underlying control
+interference. As a result, some new insights into the overall
+stability of low- and no-inertia systems are presented, together
+with the proposed directions for improving the system stability
+margin under different scenarios and conﬁgurations.
+The key ﬁndings can be summarized as follows: (i) Small-
+signal stability of low-inertia systems is signiﬁcantly more
+vulnerable and harder to ensure compared to 100 % inverter-
+based power systems; (ii) Introduction of fast-acting PE devices
+implies that traditional assumptions of neglecting transmission
+line dynamics in power system studies might not be valid
+anymore. Interestingly enough, the line connections could poten-
+tially have both positive and adverse effects on system stability,
+4Synchronous generators are denoted by “S”, whereas grid-forming and grid-
+following converter-interfaced units are denoted by “F” and “f” respectively.
+Authorized licensed use limited to: Cyprus University of Technology. Downloaded on March 18,2021 at 09:27:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+=== PDF PAGE 16 ===
+0885-8950 (c) 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2021.3061434, IEEE
+Transactions on Power Systems 16
+Scenario Generation
+type at the respective node η [%] stable
+system501 502 503 308 314 302 301 101 214 212 204 203 201 401 402 403 404 202
+G1
+1 f f f f f f f f f f S S S S S S S f 56.97 yes
+2 f f f f f f f f f f f S S S S S S f 61.96 no
+3 f f f f f f f f f f S f S S S S S f 66.35 no
+4 f f f f f f f f f f S S f S S S S f 64.68 no
+5 f f f f f f f f f f S S S f S S S f 63.36 yes
+6 f f f f f f f f f f S S S S f S S f 60.83 yes
+7 f f f f f f f f f f S S S S S f S f 63.36 yes
+8 f f f f f f f f f f S S S S S S f f 61.3 yes
+G2
+9 f f f f f f f f f f S S S S S f f f 67.68 no
+10 f f f f f f f f f f S S S S f f S f 67.21 no
+11 f f f f f f f f f f S S S f f S S f 67.21 no
+12 f f f f f f f f f f S S S S f S f f 65.16 yes
+13 f f f f f f f f f f S S S f S f S f 69.74 yes
+14 f f f f f f f f f f S S S f S S f f 67.68 yes
+G3
+15 S S S f f f f f f f f S S S S S f f 57.98 yes
+16 S S S f f f f f f f f f f S S S S f 70.74 no
+17 S S S f f f f f f f f f S S S S S f 63.02 yes
+18 S S S f f f f f f f S f f S S S S f 65.75 yes
+19 S S S f f f f f f f f S f S S S S f 61.36 yes
+20 S S S f f f f f f f f S f S S S f f 65.69 yes
+21 S S S f f f f f f f f S f f S S f f 72.07 yes
+22 S S S f f f f f f f f S f f S f f f 78.45 yes
+23 S S S f f f f f f f f S f f f f f f 82.31 no
+G4
+24 F f f f f f f f f f f f f f f f F f 91.95 yes
+25 F f f f f f f f f f f f f f f f f f 96.27 no
+G5
+26 S S S f f S S S f f S S S S S S S S 22.47 yes
+27 S S S f f S S S f f f S S S S S S S 27.45 yes
+28 S S S f f S S S f f S f S S S S S S 31.84 yes
+G6
+29 S S S f f S S S f f S f f S f f S f 58.97 yes
+30 S S S f f S S S f f f f f S f f S f 63.95 yes
+31 S S S f f S S S f f f f f S f f f f 68.28 yes
+32 S S S f f S S S f f f f f f f f f f 74.66 no
+33 S S S f f S S S f f f f f f f f S f 70.34 yes
+Fig. 22. Scenario conﬁguration and stability analysis of South-East Australian grid based on the generation portfolio in the system.
+depending on the generation portfolio; (iii) Contrary to popular
+belief, low inertia on its own does not have a major impact
+on the small-signal stability of power systems with high shares
+of PE-interfaced generation. It does however affect frequency
+dynamics and associated fast transients, which in turn can
+adversely trigger numerous protection schemes based on Rate-of-
+Change-of-Frequency (RoCoF) measurements; (iv) Controllers
+of synchronous and inverter-based generators can interact in a
+way that leads to frequency and voltage instabilities under high
+penetration of renewables. This can only be observed under
+sufﬁciently detailed modeling of underlying control schemes;
+(v) In addition to installed inverter capacity, the operating points
+have a crucial impact on overall stability and can drastically
+change the nature of unstable modes and underlying dynamics,
+which in turn could affect the optimal power ﬂow dispatch.
+Future research could include, among other things, a compre-
+hensive analysis of potentially adverse effects of incompatible
+converter control strategies, impact of unit placement on transient
+and small-signal stability, as well as the overall system capability
+for frequency regulation (e.g., limiting nadir and RoCoF) under
+high inverter penetration. Furthermore, the aspects of large-signal
+stability and the impact of HVDC and MTDC grids should be
+thoroughly investigated.
+REFERENCES
+[1] F. Milano, F. D ¨orﬂer, G. Hug, D. J. Hill, and G. Verbi ˇc, “Foundations
+and challenges of low-inertia systems,” in Power Systems Computation
+Conference (PSCC), Jun 2018.
+[2] P. Kundur, Power System Stability and Control. McGraw-Hill, 1994.
+[3] J. Machowski, J. W. Bialek, and J. R. Bumby, Power System Dynamics:
+Stability and Control. Wiley, 2008.
+[4] D. Mondal, A. Chakrabarti, and A. Sengupta, Power System Small Signal
+Stability Analysis and Control. Elsevier - Academic Press, 2014.
+[5] S. D’Arco, J. A. Suul, and O. B. Fosso, “Small-signal modelling and
+parametric sensitivity of a virtual synchronous machine,” in Power Systems
+Computation Conference, Aug 2014.
+[6] O. Mo, S. D’Arco, and J. A. Suul, “Evaluation of virtual synchronous
+machines with dynamic or quasi-stationary machine models,” IEEE Trans.
+Ind. Electron., vol. 64, no. 7, pp. 5952–5962, July 2017.
+[7] G. S. Misyris, J. A. Mermet-Guyennet, S. Chatzivasileiadis, and
+T. Weckesser, “Grid supporting vscs in power systems with varying inertia
+and short-circuit capacity,” in 2019 IEEE Milan PowerTech, June 2019.
+[8] R. Oﬁr, U. Markovic, P. Aristidou, and G.Hug, “Droop vs. virtual inertia:
+Comparison from the perspective of converter operation mode,” in IEEE
+International Energy Conference (ENERGYCON), June 2018.
+[9] U. Markovic, J. V orwerk, P. Aristidou, and G. Hug, “Stability analysis of
+converter control modes in low-inertia power systems,” in IEEE Innovative
+Smart Grid Technologies Conference Europe, Oct 2018.
+[10] U. Markovic, O. Stanojev, P. Aristidou, and G. Hug, “Partial grid forming
+concept for 100% inverter-based transmission systems,” in IEEE PES
+General Meeting, Aug 2018.
+[11] E. A. A. Coelho, P. C. Cortizo, and P. F. D. Garcia, “Small-signal stability
+for parallel-connected inverters in stand-alone ac supply systems,” IEEE
+Trans. Ind. Appl., vol. 38, no. 2, pp. 533–542, March 2002.
+[12] S. V . Iyer, M. N. Belur, and M. C. Chandorkar, “A generalized computa-
+tional method to determine stability of a multi-inverter microgrid,” IEEE
+Trans. Power Electron., vol. 25, no. 9, pp. 2420–2432, Sep. 2010.
+[13] X. Guo, Z. Lu, B. Wang, X. Sun, L. Wang, and J. M. Guerrero, “Dynamic
+phasors-based modeling and stability analysis of droop-controlled inverters
+for microgrid applications,” IEEE Trans. Smart Grid, vol. 5, no. 6, pp.
+2980–2987, Nov 2014.
+[14] S. D’Arco and J. A. Suul, “Small-signal analysis of an isolated power
+system controlled by a virtual synchronous machine,” in IEEE International
+Power Electronics and Motion Control Conference, Sep. 2016.
+[15] J. W. Simpson-Porco, F. Drﬂer, and F. Bullo, “Synchronization and power
+sharing for droop-controlled inverters in islanded microgrids,” Automatica,
+vol. 49, no. 9, pp. 2603 – 2611, 2013.
+[16] J. W. Simpson-Porco, F. D ¨orﬂer, and F. Bullo, “V oltage stabilization
+in microgrids via quadratic droop control,” 52nd IEEE Conference on
+Decision and Control, 2013.
+Authorized licensed use limited to: Cyprus University of Technology. Downloaded on March 18,2021 at 09:27:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+=== PDF PAGE 17 ===
+0885-8950 (c) 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2021.3061434, IEEE
+Transactions on Power Systems 17
+[17] J. Schiffer, R. Ortega, A. Astolﬁ, J. Raisch, and T. Sezi, “Conditions
+for stability of droop-controlled inverter-based microgrids,” Automatica,
+vol. 50, no. 10, pp. 2457 – 2469, 2014.
+[18] N. Pogaku, M. Prodanovic, and T. C. Green, “Modeling, analysis and
+testing of autonomous operation of an inverter-based microgrid,” IEEE
+Trans. Power Electron., vol. 22, no. 2, pp. 613–625, 2007.
+[19] G. Diaz, C. Gonzalez-Moran, J. Gomez-Aleixandre, and A. Diez,
+“Complex-valued state matrices for simple representation of large au-
+tonomous microgrids supplied by pq and vf generation,” IEEE Trans.
+Power Syst., vol. 24, no. 4, pp. 1720–1730, Nov 2009.
+[20] S. Leitner, M. Yazdanian, A. Mehrizi-Sani, and A. Muetze, “Small-signal
+stability analysis of an inverter-based microgrid with internal model-based
+controllers,” IEEE Trans. Smart Grid, vol. 9, no. 5, pp. 5393–5402, Sep.
+2018.
+[21] I. P. Nikolakakos, H. H. Zeineldin, M. S. El-Moursi, and N. D. Hatziar-
+gyriou, “Stability evaluation of interconnected multi-inverter microgrids
+through critical clusters,” IEEE Trans. Power Syst., vol. 31, no. 4, pp.
+3060–3072, July 2016.
+[22] N. Pogaku, M. Prodanovic, and T. C. Green, “Modeling, analysis and
+testing of autonomous operation of an inverter-based microgrid,” IEEE
+Trans. Power Electron., vol. 22, no. 2, pp. 613–625, March 2007.
+[23] Q. Peng, Q. Jiang, Y . Yang, T. Liu, H. Wang, and F. Blaabjerg, “On the
+stability of power electronics-dominated systems: Challenges and potential
+solutions,” IEEE Trans. Ind. Appl., pp. 1–1, 2019.
+[24] M. Zhao, X. Yuan, J. Hu, and Y . Yan, “V oltage dynamics of current control
+time-scale in a vsc-connected weak grid,” IEEE Trans. Power Syst., vol. 31,
+no. 4, pp. 2925–2937, July 2016.
+[25] H. Yuan, X. Yuan, and J. Hu, “Modeling of grid-connected vscs for power
+system small-signal stability analysis in dc-link voltage control timescale,”
+IEEE Trans. Power Syst., vol. 32, no. 5, pp. 3981–3991, Sep. 2017.
+[26] EirGrid and SONI, “DS3: System services review TSO recommendations,”
+EirGrid, Tech. Rep., May 2013.
+[27] J. Matevosyan and P. Du, “Wind integration in ERCOT,” in Integration of
+Large-Scale Renewable Energy into Bulk Power Systems. Springer, 2017.
+[28] Australian Energy Market Operator, “Black System South Australia 28
+September 2016 - Final Report,” Tech. Rep., March 2017.
+[29] “PSLF”, GE Energy Consulting. [Online]. Available:
+http://www.geenergyconsulting.com/practice-area/software-products/pslf
+[30] “TSAT”, Powertech Labs Inc. [Online]. Available:
+https://www.dsatools.com/tsat/
+[31] “PSS R⃝E”, Siemens PTI. [Online]. Available:
+https://new.siemens.com/global/en/products/energy/services/transmission-
+distribution-smart-grid/consulting-and-planning/pss-software/pss-e.html
+[32] P. Pourbeik, J. J. Sanchez-Gasca, J. Senthil, J. D. Weber, P. S. Zadehkhost,
+Y . Kazachkov, S. Tacke, J. Wen, and A. Ellis, “Generic dynamic models
+for modeling wind power plants and other renewable technologies in large-
+scale power system studies,” IEEE Trans. Energy Convers., vol. 32, no. 3,
+pp. 1108–1116, Sep. 2017.
+[33] J. Slootweg and W. Kling, “The impact of large scale wind power
+generation on power system oscillations,” Electric Power Systems Research,
+vol. 67, no. 1, pp. 9 – 20, 2003.
+[34] A. Mendonca and J. A. P. Lopes, “Impact of large scale wind power
+integration on small signal stability,” in 2005 International Conference on
+Future Power Systems, Nov 2005.
+[35] D. Gautam, V . Vittal, and T. Harbour, “Impact of increased penetration of
+dﬁg-based wind turbine generators on transient and small signal stability of
+power systems,” IEEE Trans. Power Syst. , vol. 24, no. 3, pp. 1426–1434,
+Aug 2009.
+[36] P. N. Papadopoulos and J. V . Milanovi, “Probabilistic framework for
+transient stability assessment of power systems with high penetration of
+renewable generation,” IEEE Trans. Power Syst., vol. 32, no. 4, pp. 3078–
+3088, July 2017.
+[37] X. Xi, H. Geng, and G. Yang, “Small signal stability of weak power
+system integrated with inertia tuned large scale wind farm,” in 2014 IEEE
+Innovative Smart Grid Technologies - Asia (ISGT ASIA), May 2014.
+[38] R. Elliott, R. Byrne, A. Ellis, and L. Grant, “Impact of increased photo-
+voltaic generation on inter-area oscillations in the western north american
+power system,” in 2014 IEEE PES General Meeting, July 2014.
+[39] F. Katiraei, M. R. Iravani, and P. W. Lehn, “Small-signal dynamic model of
+a micro-grid including conventional and electronically interfaced distributed
+resources,” IET Generation, Transmission Distribution , vol. 1, no. 3, pp.
+369–378, May 2007.
+[40] Y . Lin, B. Johnson, V . Gevorgian, V . Purba, and S. Dhople, “Stability
+assessment of a system comprising a single machine and inverter with
+scalable ratings,” in North American Power Symposium, Sep. 2017.
+[41] P. W. Sauer and M. A. Pai, Power system dynamics and stability. Prentice
+Hall, 1997.
+[42] G. Pinares, “Analysis of the dc dynamics of vsc-hvdc systems connected to
+weak ac grids using a frequency domain approach,” in 2014 Power Systems
+Computation Conference, Aug 2014.
+[43] M. C. Chandorkar, D. M. Divan, and R. Adapa, “Control of parallel
+connected inverters in standalone AC supply systems,” vol. 29, no. 1, pp.
+136–143, 1993.
+[44] J. W. Simpson-Porco, F. D ¨orﬂer, and F. Bullo, “Synchronization and power
+sharing for droop-controlled inverters in islanded microgrids,” Automatica,
+vol. 49, no. 9, pp. 2603–2611, 2013.
+[45] H. P. Beck and R. Hesse, “Virtual synchronous machine,” in 2007 9th
+International Conference on Electrical Power Quality and Utilisation, Oct
+2007.
+[46] S. D’Arco, J. A. Suul, and O. B. Fosso, “Virtual synchronous machines
+- classiﬁcation of implementations and analysis of equivalence to droop
+controllers for microgrids,” in 2013 IEEE Grenoble Conference, June 2013.
+[47] M. Colombino, D. Groß, J.-S. Brouillon, and F. D ¨orﬂer, “Global phase and
+magnitude synchronization of coupled oscillators with application to the
+control of grid-forming power inverters,” 2019.
+[48] D. Groß, M. Colombino, J.-S. Brouillon, and F. D ¨orﬂer, “The effect of
+transmission-line dynamics on grid-forming dispatchable virtual oscillator
+control,” 2019.
+[49] T. Jouini, C. Arghir, and F. D ¨orﬂer, “Grid-friendly matching of synchronous
+machines by tapping into the DC storage,” in IF AC Workshop on Distributed
+Estimation and Control in Networked Systems (NecSys, 2016, pp. 192–197.
+[50] C. Arghir, T. Jouini, and F. D ¨orﬂer, “Grid-forming control for power
+converters based on matching of synchronous machines,” Automatica,
+vol. 95, pp. 273 – 282, 2018.
+[51] S.-K. Chung, “A phase tracking system for three phase utility interface
+inverters,” IEEE Trans. Power Electron., vol. 15, no. 3, pp. 431–438, May
+2000.
+[52] S. F. Zarei, H. Mokhtari, M. A. Ghasemi, S. Peyghami, P. Davari, and
+F. Blaabjerg, “Control of grid-following inverters under unbalanced grid
+conditions,” IEEE Trans. Energy Convers., pp. 1–1, 2019.
+[53] M. C. Chandorkar, D. M. Divan, and R. Adapa, “Control of parallel
+connected inverters in standalone ac supply systems,” IEEE Trans. Ind.
+Appl., vol. 29, no. 1, pp. 136–143, Jan. 1993.
+[54] V . Mariani, F. Vasca, J. C. Vsquez, and J. M. Guerrero, “Model order
+reductions for stability analysis of islanded microgrids with droop control,”
+IEEE Trans. Ind. Electron., vol. 62, no. 7, pp. 4344–4354, July 2015.
+[55] J. W. Simpson-Porco, F. Drﬂer, and F. Bullo, “V oltage stabilization in
+microgrids via quadratic droop control,” IEEE Trans. Autom. Control,
+vol. 62, no. 3, pp. 1239–1253, March 2017.
+[56] T. Qoria, F. Gruson, F. Colas, X. Guillaud, M. Debry, and T. Prevost,
+“Tuning of cascaded controllers for robust grid-forming voltage source
+converter,” in Power Systems Computation Conference, 2018.
+[57] T. Qoria, U. Markovic, T. Jouini, D. Groß, G. Denis, and T. Prevost, “Data
+underlying the research of a 3 bus model for full inverter system - Migrate
+WP3,” 2018. [Online]. Available: https://doi.org/10.4121/uuid:e5497fd2-
+f617-4573-b6d5-1202ebae411d
+[58] ENTSO-E, “Documentation on controller tests in test grid conﬁgurations,”
+Tech. Rep., November 2013.
+[59] J. M. Uudrill, “Dynamic stability calculations for an arbitrary number of
+interconnected synchronous machines,” IEEE Trans. Power Apparatus and
+Systems, vol. PAS-87, no. 3, pp. 835–844, March 1968.
+[60] C. Spanias and I. Lestas, “A system reference frame approach for stability
+analysis and control of power grids,” ArXiv e-prints, Sep. 2018.
+[61] P. M. Anderson and A. A. Fouad, Power system control and stability. John
+Wiley & Sons, 2008.
+[62] E. Ekomwenrenren, H. Alharbi, T. Elgorashi, J. Elmirghani, and P. Aristi-
+dou, “Stabilising control strategy for cyber-physical power systems,” IET
+Cyber-Physical Systems: Theory Applications, vol. 4, no. 3, pp. 265–275,
+2019.
+[63] P. Kundur, J. Paserba, V . Ajjarapu, G. Andersson, A. Bose, C. Canizares,
+N. Hatziargyriou, D. Hill, A. Stankovic, C. Taylor, T. Van Cutsem,
+and V . Vittal, “Deﬁnition and classiﬁcation of power system stability
+IEEE/CIGRE joint task force on stability terms and deﬁnitions,” IEEE
+Trans. Power Syst., vol. 19, no. 3, pp. 1387–1401, Aug 2004.
+[64] P. V orobev, P. Huang, M. A. Hosani, J. L. Kirtley, and K. Turitsyn, “A
+framework for development of universal rules for microgrids stability and
+control,” in IEEE 56th Conference on Decision and Control, Dec 2017.
+[65] D. Groß, M. Colombino, J.-S. Brouillon, and F. D ¨orﬂer, “The effect of
+transmission-line dynamics on grid-forming dispatchable virtual oscillator
+control,” ArXiv e-prints, Feb. 2018.
+[66] P. V orobev, P. Huang, M. A. Hosani, J. L. Kirtley, and K. Turitsyn, “High-
+ﬁdelity model order reduction for microgrids stability assessment,” IEEE
+Trans. Power Syst., vol. 33, no. 1, pp. 874–887, Jan 2018.
+[67] W. Du, R. H. Lasseter, and A. S. Khalsa, “Survivability of autonomous
+microgrid during overload events,” IEEE Trans. Smart Grid, Apr 2018.
+[68] A. S. Ahmadyar, S. Riaz, G. Verbi, A. Chapman, and D. J. Hill, “A
+framework for assessing renewable integration limits with respect to
+frequency performance,” IEEE Trans. Power Syst., vol. 33, no. 4, 2018.
+[69] M. J. Gibbard and D. J. V owles, “Simpliﬁed 14-generator model of the se
+australian power system,” 2010.
+[70] A. Moeini, I. Kamwa, P. Brunelle, and G. Sybille, “Open data ieee test
+systems implemented in simpowersystems for education and research in
+power grid dynamics and control,” in 2015 50th International Universities
+Power Engineering Conference (UPEC), Sep. 2015.
+Authorized licensed use limited to: Cyprus University of Technology. Downloaded on March 18,2021 at 09:27:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+=== PDF PAGE 18 ===
+0885-8950 (c) 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2021.3061434, IEEE
+Transactions on Power Systems 18
+[71] S. P ¨uschel-Løvengreen and P. Mancarella, “Frequency response constrained
+economic dispatch with consideration of generation contingency size,” in
+2018 Power Systems Computation Conference (PSCC), June 2018.
+[72] B. Kameshwar Poolla, D. Groß, and F. D ¨orﬂer, “Placement and imple-
+mentation of grid-forming and grid-following virtual inertia,” IEEE Trans.
+Power Syst., vol. 34, no. 4, pp. 3035–3046, 2019.
+[73] D. Groß, S. Bolognani, B. Poolla, and F. D ¨orﬂer, “Increasing the resilience
+of low-inertia power systems by virtual inertia and damping,” in IREP Bulk
+Power System Dynamics & Control Symposium, Aug 2017.
+[74] A. Venkatraman, U. Markovic, D. Shchetinin, E. Vrettos, P. Aristidou, and
+G. Hug, “Improving Dynamic Properties of Low-Inertia Systems through
+Eigensensitivity Optimization,” IEEE Trans. Power Syst., vol. 36, no. 3,
+pp. 1–14, 2021.
+APPENDIX
+A. V ector F ormulation of Circuit Dynamics
+We derive the dq-vector formulation for a general RL circuit
+described by the per-unit series resistance r ∈ R>0 and induc-
+tance ℓ ∈ R>0. Let us consider such series impedance, with
+three-phase voltages vabc
+1 ∈ R3 and vabc
+2 ∈ R3 at the respective
+ends and the three-phase current iabc ∈ R3 ﬂowing through
+it. Assuming a base angular velocity ωb ∈ R>0, the current
+dynamics are described in per-unit by
+d
+dt iabc = − ωb
+ℓ
+(
+vabc
+1 − vabc
+2
+)
+− r
+ℓ ωbiabc, (30)
+Moreover, let us denote by X(θr) = T (θr)−1 the inverse of the
+power-variant dq-transform in (3). Assuming a balanced three-
+phase system and, given a reference angle θr ∈ [−π, π) of the
+dq-frame, expression (30) can be rewritten as
+d
+dt
+(
+Xidq)
+= − ωb
+ℓ X
+(
+vdq
+1 − vdq
+2
+)
+− r
+ℓ ωbXidq. (31)
+Considering that d
+dt θr = ωbωr and that j := R(π/2) can be
+interpreted as an embedding of the complex imaginary unit √−1
+into R2, the term on the left-hand side of (31) can be further
+expressed as
+d
+dt
+(
+Xidq)
+= d
+dt (X) idq + X d
+dt idq = jωbωridq + X d
+dt
+(
+idq)
+.
+(32)
+Substituting (32) into (31) and conducting a set of trivial math-
+ematical operations yields
+d
+dt idq = ωb
+ℓ
+(
+vdq
+1 − vdq
+2
+)
+−
+(r
+ℓ ωb + jωbωr
+)
+idq. (33)
+B. Frequency Control Loop of a Grid-F orming Converter in a
+Multi-Machine System
+Let us consider an index set Ng representing all interconnected
+grid-forming converters with the droop-based active power con-
+trol (10) described by
+τz ˙ωcj = ω⋆
+cj − ωcj + Rp
+c
+(
+p⋆
+cj − pcj
+)
+, ∀j ∈ Ng, (34)
+where τz = ω−1
+z is the time constant of the low-pass ﬁlter.
+Having in mind that ˙θcj = ωbωcj , one can transform (34) into
+τz ¨θcj = − ˙θcj + ωbω⋆
+cj + ωbRp
+c
+(
+p⋆
+ck − pck
+)
+. (35)
+The converter’s output power pcj can be described as the sum
+of all powers ﬂowing across the transmission lines connecting
+VSC j to the adjacent converter units k ∈ Kj:
+pcj =
+∑
+k∈Kj
+pjk =
+∑
+k∈Kj
+vT
+cj ijk , (36)
+with vcj := vfj corresponding to the ﬁlter output voltage of
+the respective converter j ∈ N g, ijk being the vector of the
+current ﬂowing through the line between converters j and k,
+and θjk := θcj − θck Furthermore, considering line parameters
+of the form (rjk , ℓjk) ∈ R>0, we express the electromagnetic
+dynamics of the line current in a dq-frame by (see Appendix A)
+˙ijk = ωb
+ℓjk
+(vcj − vck) −
+(rjk
+ℓjk
+ωb + jωbω0
+)
+ijk , (37)
+which is subsequently transformed into frequency (Laplace)
+domain as
+ijk = vcj − vck
+rjk + jω0ℓjk + sℓjk /ωb
+. (38)
+Let us deﬁne i0
+jk ∈ R2 as the nominal current ﬂowing through
+the line (rjk , ℓjk) with the end voltages vcj ∈ R2 and vck ∈ R2,
+i.e.,
+i0
+jk = vcj − vck
+rjk + jω0ℓjk
+. (39)
+Substituting (39) into (38) yields
+ijk =
+i0
+jk
+1 + sℓjk / (rjk + jω0ℓjk) ωb  
+σl
+. (40)
+Note that σl can be expressed using SI terms as
+σl = sℓjk
+(rjk + jω0ℓjk) ωb
+= sLjk
+Rjk + jω0Ljk
+= sTjk
+1 + jω0Tjk
+,
+(41)
+with Tjk = Ljk
+Rjk
+being the transmission line time constant.
+Considering that Xl
+Rjk
+≈ 10, we can assume Tjk ≈ 0.03 s.
+Therefore, it is reasonable to assume that σl ≪ 1 holds for modes
+evolving on the timescales shorter than the line time constant
+Tjk [66]. By performing a ﬁrst-order Taylor series expansion
+(1 + σl)−1 ≈ 1 − σl, we can rewrite (40) as
+ijk ≈ i0
+jk − sℓjk
+ωb (rjk + jω0ℓjk) i0
+jk , (42)
+and transform it back into the time-domain form
+ijk ≈ i0
+jk − ℓjk
+ωb (rjk + jω0ℓjk)2
+(
+˙vcj − ˙vck
+)
+. (43)
+Assuming nominal voltage magnitudes and small angle devia-
+tions between the nodes, i.e., ∥vcj ∥ ≈ 1 p.u. and θjk ≈ 0, ∀j ∈
+Ng, ∀k ∈ Kj, we can compute the time derivatives of voltage
+vectors and subsequently the total active power injection as
+pcj =
+∑
+k∈Kj
+
+ ω0ℓjk
+ωb
+(
+r2
+jk + ω2
+0ℓ2
+jk
+)2 θcj +
+2rjk ℓ2
+jk
+ωb
+(
+r2
+jk + ω2
+0ℓ2
+jk
+)2
+˙θcj
+
+
+= Bjθcj + B′
+j ˙θcj .
+(44)
+Substituting (44) into (34) yields the frequency dynamics of an
+individual inverter of the form
+τz ¨θcj +
+(
+1 − ωbRp
+c B′
+j
+)˙θcj + ωbRp
+c Bjθcj + Cj = 0, (45)
+with Cj = ωbω⋆
+cj + ωbRp
+c p⋆
+cj .
+Authorized licensed use limited to: Cyprus University of Technology. Downloaded on March 18,2021 at 09:27:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+=== PDF PAGE 19 ===
+0885-8950 (c) 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2021.3061434, IEEE
+Transactions on Power Systems 19
+Uros Markovic (S’16-M’20) was born in Belgrade,
+Serbia. He received the Dipl.-Eng. degree in Electrical
+Engineering from the University of Belgrade, Serbia,
+in 2013, with a major in power systems. He obtained
+the M.Sc. and Ph.D. degrees in Electrical Engineer-
+ing and Information Technology in 2016 and 2020,
+respectively, both from the Swiss Federal Institute of
+Technology (ETH), Zurich, Switzerland. He is currently
+a joint Postdoctoral researcher with the Power Systems
+Laboratory and the Automatic Control Laboratory of
+ETH Zurich, Switzerland, and an afﬁliated researcher
+at the Grid Integration Group (GIG) of Lawrence Berkeley National Laboratory
+(LBNL), California, USA.
+His research interests include power system dynamics, control and optimiza-
+tion, with a focus on stability and operation of inverter-dominated power systems
+with low rotational inertia.
+Ognjen Stanojev (S’18) received the B.Sc. degree in
+Electrical and Computer Engineering with a major in
+power systems from the University of Novi Sad, Serbia,
+in 2017. He obtained the M.Sc. degree in Electrical En-
+gineering and Information Technology in 2019 from the
+Swiss Federal Institute of Technology, Zurich, Switzer-
+land, where he is currently working towards the Ph.D.
+degree in the Power Systems Laboratory (PSL) since
+October 2019. His research interests include control and
+optimization of low inertia power systems.
+Petros Aristidou (S’10-M’15-SM’20) received a
+Diploma in Electrical and Computer Engineering from
+the National Technical University of Athens, Greece,
+in 2010, and a Ph.D. in Engineering Sciences from the
+University of Li `ege, Belgium, in 2015. He is currently
+a Lecturer in Sustainable Power Systems at the Cyprus
+University of Technology. His research interests include
+power system dynamics, control, and simulation.
+Evangelos Vrettos (S’09-M’17) received the Dipl.-Ing
+degree in Electrical and Computer Engineering from
+the National Technical University of Athens, Greece,
+in 2010, with a major in power systems. He joined the
+Power Systems Laboratory (PSL) at the Swiss Federal
+Institute of Technology (ETH), Zurich, Switzerland, in
+2011, where he obtained the Ph.D. degree in Electrical
+Engineering and Information Technology in 2016, and
+continued as a Postdoctoral researcher for half a year.
+He is currently an R&D Manager at Swissgrid, the
+Swiss electricity transmission system operator, and an
+afﬁliated researcher at the Grid Integration Group (GIG) of Lawrence Berkeley
+National Laboratory (LBNL), California, USA.
+His research has focused on optimization and control for demand response
+and energy storage resources, low-inertia power systems and, more recently,
+optimal power ﬂow applications for congestion management and blockchain-
+based solutions for ancillary services markets.
+Duncan Callaway (M’08) is an Associate Profes-
+sor of Energy and Resources at the University of
+California, Berkeley. He is also a faculty afﬁliate in
+Electrical Engineering and Computer Science, and a
+faculty scientist at Lawrence Berkeley Laboratory. He
+received his PhD from Cornell University. He has
+held engineering positions at Davis Energy Group and
+PowerLight Corporation, and academic positions at UC
+Davis, the University of Michigan and UC Berkeley.
+Duncan teaches courses on electric power systems and
+at the intersection of statistical learning and energy. His
+research focuses on grid integration of renewable electricity and models and
+control strategies for demand response, electric vehicles and electricity storage.
+Gabriela Hug (S’05-M’08-SM’14) was born in Baden,
+Switzerland. She received the M.Sc. degree in electrical
+engineering in 2004 and the Ph.D. degree in 2008,
+both from the Swiss Federal Institute of Technology
+(ETH), Zurich, Switzerland. After the Ph.D. degree,
+she worked in the Special Studies Group of Hydro
+One, Toronto, ON, Canada, and from 2009 to 2015,
+she was an Assistant Professor in Carnegie Mellon
+University, Pittsburgh, PA, USA. She is currently an
+Associate Professor in the Power Systems Laboratory,
+ETH Zurich. Her research is dedicated to control and
+optimization of electric power systems.
+Authorized licensed use limited to: Cyprus University of Technology. Downloaded on March 18,2021 at 09:27:38 UTC from IEEE Xplore.  Restrictions apply. 

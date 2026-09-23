@@ -1,0 +1,957 @@
+=== PDF PAGE 1 ===
+IEEE TRANSACTIONS ON INDUSTRIAL ELECTRONICS, VOL. 58, NO. 4, APRIL 2011 1259
+Synchronverters: Inverters That Mimic
+Synchronous Generators
+Qing-Chang Zhong, Senior Member , IEEE, and George Weiss
+Abstract—In this paper, the idea of operating an inverter
+to mimic a synchronous generator (SG) is motivated and
+developed. We call the inverters that are operated in this
+way synchronverters. Using synchronverters, the well-established
+theory/algorithms used to control SGs can still be used in power
+systems where a signiﬁcant proportion of the generating capac-
+ity is inverter-based. We describe the dynamics, implementation,
+and operation of synchronverters. The real and reactive power
+delivered by synchronverters connected in parallel and operated
+as generators can be automatically shared using the well-known
+frequency- and voltage-drooping mechanisms. Synchronverters
+can be easily operated also in island mode, and hence, they provide
+an ideal solution for microgrids or smart grids. Both simulation
+and experimental results are given to verify the idea.
+Index Terms —Distributed generation, frequency drooping,
+inverter-dominated power system, load sharing, microgrid, par-
+allel inverters, pulsewidth modulation (PWM) inverter, renewable
+energy, smart grid, static synchronous generator (SG), synchron-
+verter, virtual SG, voltage drooping.
+I. I NTRODUCTION
+F
+OR ECONOMIC, technical, and environmental reasons,
+the share of electrical energy produced by distributed
+energy sources, such as combined heat and power (CHP)
+plants, and renewable-energy sources, such as wind power,
+solar power, wave and tidal power, etc., is steadily increas-
+ing. The European Union has set a 22% target for the
+share of renewable-energy sources and an 18% target for
+the share of CHP in electricity generation by 2010. The
+electrical power system is currently undergoing a dramatic
+change from centralized generation to distributed generation.
+Most of these distributed/renewable-energy generators com-
+prise variable-frequency ac sources, high-frequency ac sources,
+or dc sources, and hence, they need dc–ac converters, also
+Manuscript received October 20, 2009; accepted January 19, 2010. Date
+of publication April 29, 2010; date of current version March 11, 2011. This
+paper was presented in part at the 2009 IEEE Power Engineering Society Power
+Systems Conference & Exhibition Seattle, W A, USA, March 2009. The work
+of Q.-C Zhong was supported in part by the Royal Academy of Engineering,
+by the Leverhulme Trust, with the award of a Senior Research Fellowship
+(2009-2010), and by the EPSRC, U.K., with the support of the Network
+for New Academics in Control Engineering (New Ace, www.newace.org.uk)
+Grant EP/E055877/1 and the support under the DTA scheme.
+Q.-C. Zhong was with the Department of Electrical Engineering and Elec-
+tronics, University of Liverpool, L69 3GJ Liverpool, U.K. He is now with
+the Department of Aeronautical and Automotive Engineering, Loughborough
+University, Leicestershire LE11 3TU, U.K.
+G. Weiss is with the Department of Electrical Engineering Systems,
+Faculty of Engineering, Tel Aviv University, Ramat Aviv 69978, Israel (e-mail:
+gweiss@eng.tau.ac.il).
+Color versions of one or more of the ﬁgures in this paper are available online
+at http://ieeexplore.ieee.org.
+Digital Object Identiﬁer 10.1109/TIE.2010.2048839
+called inverters, to interface with the public-utility grid. For
+example, wind turbines are most effective if free to generate
+at variable frequency, and so, they require conversion from
+variable frequency ac to dc to ac; small gas-turbines with direct-
+drive generators operate at high frequency and also require
+ac to dc to ac conversion; photovoltaic arrays require dc–ac
+conversion. This means that more and more inverters will be
+connected to the grid and will eventually dominate power
+generation.
+The current paradigm in the control of wind- or solar-power
+generators is to extract the maximum power from the power
+source and inject them all into the power grid (see, for example,
+[1]–[3]). Advanced algorithms have been developed to ensure
+that the current injected into the grid is clean sinusoidal (see,
+for example, [4]). The policy of injecting all available power
+to the grid is a good one as long as renewable power sources
+constitute a small part of the grid power capacity. Indeed, any
+random power ﬂuctuation of the renewable power generators
+will be compensated by the controllers associated with the large
+conventional generators, and some of these generators will also
+take care of the overall power balance, system stability, and
+fault ride through.
+When renewable power generators (particularly the solar
+ones) will provide the majority of the grid power, such “ir-
+responsible” behavior (on their part) will become untenable.
+Thus, the need will arise to operate them in the same way
+as conventional power generators or at least to imitate certain
+aspects of the operation of conventional generators using novel
+techniques (see [5]–[11]). This will require high-efﬁciency
+energy-storage units so that the random ﬂuctuations of the
+prime power source can be ﬁltered out. The key problem here
+is how to control the inverters in distributed power generators.
+There are two options: The ﬁrst is to redesign the whole power
+system and to change the way it is operated (e.g., establish fast
+communication lines between generators and possibly central
+control) and the second is to ﬁnd a way so that these inverters
+can be integrated into the existing system and behave in the
+same way as large synchronous generators (SG) do. We think
+that the second option has the advantages, as it would assure a
+smooth transition to a grid dominated by inverters.
+In this paper, we propose a method by which an inverter
+can be operated to mimic the behavior of an SG. The dynamic
+equations are the same; only the mechanical power exchanged
+with the prime mover (or with the mechanical load, as the
+case may be) is replaced with the power exchanged with the
+dc bus. We call such an inverter (including the ﬁlter inductors
+and capacitors) and the associated controller a synchronverter.
+To be more precise, a synchronverter is equivalent to an SG
+with a small capacitor bank connected in parallel to the stator
+0278-0046/$26.00 © 2010 IEEE
+
+=== PDF PAGE 2 ===
+1260 IEEE TRANSACTIONS ON INDUSTRIAL ELECTRONICS, VOL. 58, NO. 4, APRIL 2011
+terminals. A sychronverter will have all the good and bad
+properties of an SG, which is a complex nonlinear system. For
+example, the undesirable phenomena, such as loss of stability
+due to underexcitation as well as hunting (oscillations around
+the synchronous frequency), could occur in a synchronverter.
+An advantage is that we can choose the parameters, such
+as inertia, friction coefﬁcient, ﬁeld inductance, and mutual
+inductances. (The energy that would be lost in the virtual
+mechanical friction is not lost in reality; it is directed back
+to the dc bus.) Moreover, we can (and do) choose to have
+no magnetic saturation and no eddy currents. If we want,
+we can choose parameter values that are impossible in a real
+SG, and we can also vary the parameters while the system is
+operating.
+If a synchronverter is connected to the utility grid and is
+operated as a generator, no difference would be felt from the
+grid side between this system and an SG. Thus, the conventional
+control algorithms and equipment that have been developed for
+SGs driven by prime movers (and which have reached a high
+level of maturity over 100 years) can be applied to synchron-
+verters. Synchronverters can also be operated as synchronous
+motors based on the same mathematical derivation. One option
+is to decide the direction of the energy ﬂow between the dc
+bus and the ac bus in a synchronverter automatically according
+to the grid frequency. We think that synchronverters operated as
+synchronous motors will be useful, for example, in high-voltage
+dc transmission lines, where dc power would be sent from a
+synchronverter working as a motor to another one working as a
+generator at the other end of the line.
+We mention that IEEE deﬁned a term, called static SG [12],
+to designate a static self-commutated switching power con-
+verter supplied from an appropriate electric energy source
+and operated to produce a set of adjustable multiphase output
+voltages, which may be coupled to an ac power system for
+the purpose of exchanging independently controllable real and
+reactive power. This term was originally deﬁned for one of the
+shunt-connected controllers in ﬂexible ac transmission system.
+Clearly, synchronverters operated as generators would be a
+particular type of static SGs.
+There are papers in the literature exploring related ideas.
+The concept of a virtual synchronous machine (VISMA) was
+proposed in [13], where the voltages at the point of common
+coupling with the grid are measured to calculate the phase
+currents of the VISMA in real time. These currents are then
+used as reference currents for the inverter, and hence, the
+inverter behaves as a current source connected to the grid. If
+the current tracking error is small, then the inverter behaves
+like a synchronous machine, justifying the term VISMA. If
+the current tracking error is large, then the inverter behavior
+changes. They provided extensive experimental results (but the
+grid integration of VISMA using control algorithms for SG was
+left as future work). As a key difference to the synchronverter,
+it is worth mentioning that the synchronverter does not depend
+on the tracking of reference currents or voltages. In [15] and
+[16], a short-term energy-storage system is added to the inverter
+in order to provide virtual inertia to the system. The power
+ﬂow to the storage is proportional to the derivative of the grid
+frequency (as it would be with real inertia). This kind of inverter
+with added virtual inertia, called virtual SGs, can contribute to
+the short-term stabilization of the grid frequency. However, the
+system dynamics seen from the grid side will be different from
+those of an SG.
+The rest of this paper is organized as follows. In Section II,
+a dynamic model of SGs is established under no assumptions
+on the signals. Although the model of an SG is well docu-
+mented in the literature, the way the model is described here
+is somewhat fresh. The way to implement a synchronverter is
+described in Section III, and issues related to its operation, e.g.,
+frequency- and voltage-drooping mechanisms for load sharing,
+are described in Section IV. Simulation results are given in
+Section V, and experimental results are given in Section VI with
+conclusions in Section VII. A patent application has been ﬁled
+for the technology described here.
+II. M
+ODELING SYNCHRONOUS MACHINES
+The model of synchronous machines can be found in many
+sources such as [17]–[21]. Most of the references make various
+assumptions, such as steady state and/or balanced sinusoidal
+voltages/currents, to simplify the analysis. Here, we brieﬂy
+outline a model that is a (nonlinear) passive dynamic system
+without any assumptions on the signals, from the perspective
+of system analysis and controller design. We consider a round
+rotor machine so that all stator inductances are constant. Our
+model assumes that there are no damper windings in the rotor,
+that there is one pair of poles per phase (and one pair of poles
+on the rotor), and that there are no magnetic-saturation effects
+in the iron core and no eddy currents. As is well known, the
+damper windings help to suppress hunting and also help to
+bring the machine into synchronism with the grid (see, for
+example, [21]). We leave it for later research to establish if it
+is worthwhile to include damper windings in the model used to
+implement a synchronverter. Our simulation and experimental
+results do not seem to point at such a need-we got negligible
+hunting, and we got fast synchronization algorithms without
+using damper windings.
+A. Electrical Part
+For details on the geometry of the windings, we refer to
+[18] and [19]. The ﬁeld and the three identical stator windings
+are distributed in slots around the periphery of the uniform air
+gap. The stator windings can be regarded as concentrated coils
+having self-inductance L and mutual inductance − M (M> 0
+with a typical value 1/2L, the negative sign is due to the 2π/3
+phase angle), as shown in Fig. 1. The ﬁeld (or rotor) winding
+can be regarded as a concentrated coil having self-inductance
+L
+f . The mutual inductance between the ﬁeld coil and each of
+the three stator coils varies with the rotor angle θ, i.e.,
+Maf =Mf cos(θ)
+Mbf =Mf cos
+(
+θ− 2π
+3
+)
+Mcf =Mf cos
+(
+θ− 4π
+3
+)
+
+=== PDF PAGE 3 ===
+ZHONG AND WEISS: SYNCHRONVERTERS: INVERTERS THAT MIMIC SYNCHRONOUS GENERATORS 1261
+Fig. 1. Structure of an idealized three-phase round-rotor SG, modiﬁed from
+[17, Fig. 3.4].
+where Mf > 0. The ﬂux linkages of the windings are
+Φa =Lia − Mib − Mic + Maf if
+Φb = − Mia + Lib − Mic + Mbf if
+Φc = − Mia − Mib + Lic + Mcf if
+Φf =Maf ia + Mbf ib + Mcf ic + Lf if
+where ia,i b, and ic are the stator phase currents and if is the
+rotor excitation current. Denote
+Φ=
+⎡
+⎣
+Φa
+Φb
+Φc
+⎤
+⎦ i =
+⎡
+⎣
+ia
+ib
+ic
+⎤
+⎦
+˜cos θ=
+⎡
+⎣
+cos θ
+cos
+(
+θ− 2π
+3
+)
+cos
+(
+θ− 4π
+3
+)
+⎤
+⎦ ˜sin θ=
+⎡
+⎣
+sin θ
+sin
+(
+θ− 2π
+3
+)
+sin
+(
+θ− 4π
+3
+)
+⎤
+⎦.
+Assume for the moment that the neutral line is not con-
+nected, then
+ia + ib + ic =0 .
+It follows that the stator ﬂux linkages can be rewritten as
+Φ= Lsi + Mf if ˜cos θ (1)
+where Ls = L + M, and the ﬁeld ﬂux linkage can be re-
+written as
+Φf = Lf if + Mf ⟨i, ˜cos θ⟩ (2)
+where ⟨·, ·⟩ denotes the conventional inner product in R3.
+We remark that the second term Mf ⟨i, ˜cosθ⟩ (called arma-
+ture reaction) is constant if the three phase currents are sinu-
+soidal (as functions of θ) and balanced. We also mention that√
+2/3⟨i, ˜cosθ⟩ is called the d-axis component of the current.
+Assume that the resistance of the stator windings isRs; then,
+the phase terminal voltagesv =[ va vb vc]T can be obtained
+from (1) as
+v = − Rsi − dΦ
+dt = − Rsi − Ls
+di
+dt + e (3)
+where e =[ ea eb ec]T is the back electromotive force
+(EMF) due to the rotor movement given by
+e = Mf if ˙θ˜sinθ− Mf
+dif
+dt ˜cos θ. (4)
+The voltage vector e is also called no-load voltage or syn-
+chronous internal voltage.
+We mention that, from (2), the ﬁeld terminal voltage is
+vf = − Rf if − dΦf
+dt (5)
+where Rf is the resistance of the rotor winding. However, we
+shall not need the expression for vf because we shall use if
+instead of vf as an adjustable constant input. This completes
+the modeling of the electrical part of the machine.
+B. Mechanical Part
+The mechanical part of the machine is governed by
+J ¨θ= Tm − Te − Dp ˙θ (6)
+where J is the moment of inertia of all the parts rotating with
+the rotor,Tm is the mechanical torque,Te is the electromagnetic
+toque, and Dp is a damping factor. Te can be found from the
+energy E stored in the machine magnetic ﬁeld, i.e.,
+E = 1
+2 ⟨i,Φ⟩ + 1
+2if Φf = 1
+2 ⟨i, Lsi + Mf if ˜cos θ⟩
++ 1
+2if (Lf if + Mf ⟨i, ˜cosθ⟩)
+= 1
+2 ⟨i, Lsi⟩ + Mf if ⟨i, ˜cos θ⟩ + 1
+2Lf i2
+f .
+From simple energy considerations (see, e.g., [18] and [22])
+we have
+Te = ∂E
+∂θ
+⏐⏐⏐
+⏐
+Φ,Φf constant
+(because constant ﬂux linkages mean no back EMF, all the
+power ﬂow is mechanical). It is not difﬁcult to verify (using the
+formula for the derivative of the inverse of a matrix function)
+that this is equivalent to
+Te = − ∂E
+∂θ
+⏐⏐⏐⏐
+i,if constant
+.
+Thus
+Te = − Mf if
+⟨
+i, ∂
+∂θ˜cos θ
+⟩
+= Mf if ⟨i, ˜sin θ⟩. (7)
+
+=== PDF PAGE 4 ===
+1262 IEEE TRANSACTIONS ON INDUSTRIAL ELECTRONICS, VOL. 58, NO. 4, APRIL 2011
+We mention that−
+√
+2/3⟨i, ˜sinθ⟩ is called the q-axis compo-
+nent of the current. Note that if i = i0 ˜sinϕ for some arbitrary
+angle ϕ, then
+Te = Mf if i0⟨ ˜sin ϕ, ˜sin θ⟩ = 3
+2Mf if i0 cos(θ− ϕ).
+Note also that if if is constant (as is usually the case), then
+(7) with (4) yields
+Te ˙θ= ⟨i, e⟩.
+C. Provision of Neutral Line
+The previous analysis is based on the assumption that the
+neutral line is not connected. If the neutral line is connected,
+then
+ia + ib + ic = iN
+where iN is the current ﬂowing through the neutral line. Then,
+the formula for the stator ﬂux linkages (1) becomes
+Φ= Lsi + Mf if ˜cos θ−
+⎡
+⎣
+1
+1
+1
+⎤
+⎦Mi
+N
+and the phase terminal voltages (3) become
+v = − Rsi − Ls
+di
+dt +
+⎡
+⎣
+1
+1
+1
+⎤
+⎦M diN
+dt + e
+where e was given by (4). The other formulas are not affected.
+As we have seen, the provision of a neutral line makes
+the system model somewhat more complicated. However, in
+a synchronverter to be designed in the next section, M is a
+design parameter that can be chosen to be zero. The physical
+meaning of this is that there is no magnetic coupling between
+the stator windings. This does not happen in a physical SG but
+can be easily implemented in a synchronverter. When we need
+to provide a neutral line, it is an advantageous choice to take
+M =0 as it simpliﬁes the equations. Otherwise, the choice of
+M and L individually is irrelevant; what matters only is that
+L
+s = L + M. In the sequel, the model of an SG consisting of
+(3), (4), (6), and (7) will be used to operate an inverter as a
+synchronverter.
+III. I MPLEMENTATION OF SYNCHRONVERTER
+In this section, the details on how to implement a synchron-
+verter will be described. A simple dc/ac converter (inverter)
+used to convert dc power into three-phase ac (or the other way
+round) is shown in Fig. 2. It includes three inverter legs operated
+using pulsewidth modulation (PWM) and LC ﬁlters to reduce
+the voltage ripple (and hence, the current ripple) caused by the
+switching. In grid-connected operation, the impedance of the
+grid should be included in the impedance of the inductors L
+g
+(with series resistance Rg), and then we may consider that after
+the circuit breaker, we have an inﬁnite bus. The circuit shown
+Fig. 2. Power part of a synchronverter—a three phase inverter, including LC
+ﬁlters.
+Fig. 3. Electronic part of a synchronverter (without control). This part inter-
+acts with the power part via e and i.
+in Fig. 2 does not provide a neutral line, but this can be added
+if needed. The power part of the synchronverter is the circuit to
+the left of the three capacitors, together with the capacitors. If
+we disregard the ripple, then this part of the circuit will behave
+like an SG connected in parallel with the same capacitors. The
+inductors, denoted as L
+g, are not part of the synchronverter,
+but it is useful to have them (for synchronization and power
+control). It is important to have some energy storage (not
+shown) on the dc bus (at the left end of the ﬁgure) since the
+power absorbed from the dc bus represents not only the power
+taken from the imaginary prime mover but also from the inertia
+of the rotating part of the imaginary SG. This latter component
+of the power may come in strong bursts, which is proportional
+to the derivative of the grid frequency.
+What we call the electronic part of the synchronverter is
+a digital signal processor (DSP) and its associated circuits,
+running under a special program, which controls the switches
+shown in Fig. 2. Its block diagram is shown in Fig. 3. These
+two parts interact via the signals e and i (v and v
+g will be
+used for controlling the synchronverter). The various voltage
+and current sensors and the signal conditioning circuits and
+analog/digital converters should be regarded as part of the
+electronic part of the synchronverter. Normally, the program on
+the DSP will contain also parts that represent the controller of
+the synchronverter (not the synchronverter itself).
+A. Power Part
+We give some ideas for the design of the power part. It
+is important to understand that the terminal voltages v =
+[v
+a vb vc]T of the imaginary SG, as given in (3), are rep-
+resented by the capacitor voltages shown in Fig. 2. Further,
+
+=== PDF PAGE 5 ===
+ZHONG AND WEISS: SYNCHRONVERTERS: INVERTERS THAT MIMIC SYNCHRONOUS GENERATORS 1263
+the impedance of the stator windings of the imaginary SG is
+represented by the inductance Ls and the resistance Rs of the
+left inductors shown in Fig. 2. It follows from here that ea, eb,
+and ec should represent the back EMF due to the movement of
+the imaginary rotor. This is not possible exactly becauseea, eb,
+and ec are high-frequency switching signals, but it is possible
+in the average sense: The switches in the inverter should be
+operated so that the average values of ea, eb, and ec over a
+switching period should be equal to e given in (4). This can
+be achieved by the usual PWM technique.
+It is advantageous to assume that the imaginary ﬁeld (rotor)
+winding of the synchronverter is fed by an adjustable dc current
+source if instead of a voltage source vf . Then, the terminal
+voltage vf varies, but this is irrelevant. As long asif is constant,
+the generated voltage from (4) reduces to
+e = ˙θMf if ˜sin θ. (8)
+The ﬁltering capacitors C should be chosen such that the
+resonant frequency 1/√ LsC is approximately √ ωnωs, where
+ωn is the nominal angular frequency of the grid voltage and
+ωs is the angular switching frequency used to turn on/off the
+switches (insulated-gate bipolar transistors (IGBTs) are shown
+in the ﬁgure but other power semiconductors can be used
+as well).
+If a neutral line is needed, then the strategies proposed in [23]
+or [24] to provide a neutral line without affecting the control of
+the three-phase inverter may be used.
+B. Electronic Part
+Deﬁne the generated real power P and reactive power Q
+(as seen from the inverter legs) as
+P = ⟨i, e⟩ Q = ⟨i, e
+q ⟩
+where eq has the same amplitude as e but with a phase delayed
+from that of e by π/2, i.e.,
+eq = ˙θMf if ˜sin
+(
+θ− π
+2
+)
+= − ˙θMf if ˜cos θ.
+Then, the real power and reactive power are, respectively
+P = ˙θMf if ⟨i, ˜sin θ⟩
+Q = − ˙θMf if ⟨i, ˜cos θ⟩. (9)
+These coincide with the conventional deﬁnitions for real
+power and reactive power, usually expressed ind, qcoordinates.
+Positive Q corresponds to an inductive load. Note that, if
+i = i0 ˜sinϕ for some angle ϕ (this would be the case, e.g., in
+balanced steady-state operation with θ− ϕ constant), then
+P = ˙θMf if ⟨i, ˜sin θ⟩ = 3
+2
+˙θMf if i0 cos(θ− ϕ)
+Q = − ˙θMf if ⟨i, ˜cos θ⟩ = 3
+2
+˙θMf if i0 sin(θ− ϕ).
+The previous formulas forP and Q are used when regulating
+the real and reactive power of an SG.
+Equation (6) can be written as
+¨θ= 1
+J (Tm − Te − Dp ˙θ)
+where the mechanical (or active) torque Tm is a control input,
+while the electromagnetic torqueTe depends on i and θaccord-
+ing to (7). This equation, together with (7)–(9), is implemented
+in the electronic part of a synchronverter shown in Fig. 3. Thus,
+the state variables of the synchronverter are i (the inductor
+currents), v (the capacitor voltages), θ, and ˙θ (which are a
+virtual angle and a virtual angular speed). (In the absence of
+a neutral line, only two of the three currents in the vector i are
+independent.) The control inputs of the synchronverter are T
+m
+and Mf if . In order to operate the synchronverter in a useful
+way, we need a controller that generates the signals Tm and
+Mf if such that system stability is maintained, and the desired
+values of real and reactive power are followed. The signiﬁcance
+of Q will be discussed in the next section.
+IV . O
+PERATION OF SYNCHRONVERTER
+A. Frequency Drooping and Regulation of Real Power
+For SGs, the rotor speed is maintained by the prime mover,
+and it is known that the damping factorDp is due to mechanical
+friction. An important mechanism for SGs to share load evenly
+(in proportion to their nominal load) is to vary the real power
+delivered to the grid according to the grid frequency, which is
+a control loop called “frequency droop.” When the real-power
+demand increases, the speed of the SGs drops due to increased
+T
+e in (6). The power regulation system of the prime mover then
+increases the mechanical power, e.g., by widening the throttle
+valve of an engine, so that a new power balance is achieved.
+Typical values for the frequency droop are a 100% increase
+in power for a frequency decrease between 3% and 5% (from
+nominal values).
+The frequency-droop mechanism can be implemented in a
+synchronverter by comparing the virtual angular speed ˙θ with
+the angular frequency reference ˙θ
+r (which normally would be
+equal to the nominal angular frequency of the grid ˙θn) and
+adding this difference, multiplied with a gain, to the active
+torque Tm. The formulas show that the effect of the frequency-
+droop control loop is equivalent to a signiﬁcant increase of
+the mechanical friction coefﬁcient Dp. In Fig. 4 and later,
+the constant Dp represents the (imaginary) mechanical-friction
+coefﬁcient plus the frequency-drooping coefﬁcient (the latter
+is far larger). Thus, denoting the change in the total torque
+acting on the imaginary rotor by Δ T and the change in angular
+frequency by Δ ˙θ,w eh a v e
+D
+p = − Δ T
+Δ ˙θ
+.
+It is worth noting that, in some references, such as [5], Dp
+is deﬁned as − Δ ˙θ/Δ T . Here, the negative sign is to make Dp
+positive. The active torqueTm can be obtained from the setpoint
+(or reference value) of the real power Pset by dividing it with
+the nominal mechanical speed ˙θn, as shown in Fig. 4. (Actually
+it should be ˙θinstead of ˙θn, but the relative difference between
+
+=== PDF PAGE 6 ===
+1264 IEEE TRANSACTIONS ON INDUSTRIAL ELECTRONICS, VOL. 58, NO. 4, APRIL 2011
+Fig. 4. Regulation of the real and reactive power in a synchronverter.
+θn and θ is negligible.) This completes the feedback loop for
+real power, as seen in the upper part of Fig. 4. Because of
+the built-in frequency-drooping mechanism, a synchronverter
+automatically shares the load variations with other inverters of
+the same type and with SGs on the same power grid. The real
+power regulation loop is very simple because no mechanical
+devices are involved, and no measurements other than i are
+needed (all the variables are available in the DSP).
+The regulation mechanism of the real power (torque) shown
+in the upper part of Fig. 4 has a nested structure, where the inner
+loop is the frequency-droop loop (with feedback gain D
+p) and
+the outer loop is the more complex real power loop (with the
+feedback coming from the currenti via the torqueTe). The time
+constant of the frequency-droop loop is τf = J/Dp. Hence, if
+we have decided upon τf , then J should be chosen as
+J = Dpτf .
+Because there is no delay involved in the frequency-droop
+loop, the time constant τf can be made much smaller than for a
+real SG. It is not necessary to have a large inertia as with a phys-
+ical SG, where a larger inertia means that more energy is stored
+mechanically. Whether a small inertia is good for overall grid
+stability is an open question for later research. At any rate, the
+energy-storage function of a synchronverter can, and should,
+be decoupled from the inertia (unlike the approach proposed
+in [15]). The short-term energy-storage function (inertia) can
+be implemented with a synchronverter using the same storage
+system (e.g., batteries) that is used for long-term storage.
+B. V oltage Drooping and Regulation of Reactive Power
+The regulation of reactive power Q ﬂowing out of the
+synchronverter can be realized similarly. Deﬁne the voltage-
+drooping coefﬁcient D
+q as the ratio of the required change of
+reactive power Δ Q to the change of voltage Δ v, i.e.,
+Dq = − Δ Q
+Δ v .
+We note that in some references (e.g., [5]), Dq is deﬁned
+as − Δ v/Δ Q. The control loop for the reactive power can be
+realized as shown in the lower part of Fig. 4. The difference
+between the reference voltage vr and the amplitude vm of
+the feedback voltage vfb (normally vfb would be vg from
+Fig. 2 if it is available, otherwise, something close to it) is
+the voltage amplitude tracking error. This error is multiplied
+with the voltage-drooping coefﬁcient D
+q and then added to the
+tracking error between the reference valueQset and the reactive
+power Q, which is calculated according to (9). The resulting
+signal is then fed into an integrator with a gain1/K to generate
+Mf if . It is important to note that there is no need to measure
+the reactive power Q, as it can be computed from i (which is
+measured) and from θ and ˙θ, which are available internally in
+the DSP.
+The control of the reactive power shown in the lower part
+of Fig. 4 also has a nested structure, if the effect of the LC
+ﬁlter is ignored (which means considering vfb ≈ e so that
+vm ≈ ˙θMf if ). The inner loop is the (amplitude) voltage loop,
+and the outer loop is the reactive-power loop. The time constant
+τ
+v of the voltage loop can be estimated as
+τv ≈ K
+˙θDq
+≈ K
+˙θnDq
+as the variation of ˙θis very small. Hence, K follows if τv and
+Dq have been chosen.
+The amplitude detector in Fig. 4 can be realized in several
+ways. One is by using a phase-locked loop (PLL); we do not
+go into the details of this. Another elementary method is as
+follows: Assume that vfba = vm sin θa, vfbb = vm sinθb, and
+vfbc = vm sin θc, then
+vavb + vbvc + vcva
+= v2
+m[sinθa sin θb +s i nθb sin θc +s i nθc sin θa]
+= v2
+m
+2 [cos(θa − θb)+c o s (θb − θc)+c o s (θc − θa)]
+− v2
+m
+2 [cos(θa + θb)+c o s (θb + θc)+c o s (θc + θa)].
+When the terminal voltages are balanced, i.e., when θb =
+θa − 2π/3= θc +2 π/3, then the last term of the aforemen-
+tioned is zero, and we obtain
+vavb + vbvc + vcva = − 3
+4v2
+m.
+The amplitude vm can be computed from here with ease. In
+a real implementation, a low-pass ﬁlter is needed to attenuate
+the ripples in vm (at twice the grid frequency) as the terminal
+voltages may be unbalanced. This observation applies also to
+Te and Q.
+V. S IMULATION RESULTS
+The ideas described earlier have been veriﬁed with simula-
+tions. The parameters of the inverter used in the simulations are
+given in Table I.
+In our simulations, the inverter is considered to be connected
+to the grid via a step-up transformer so that we work with rela-
+tively low voltages. The reason for this is to make the simulation
+
+=== PDF PAGE 7 ===
+ZHONG AND WEISS: SYNCHRONVERTERS: INVERTERS THAT MIMIC SYNCHRONOUS GENERATORS 1265
+TABLE I
+PARAMETERS OF SYNCHRONVERTER
+results comparable with the experimental results to be given in
+the next section. However, the proposed control strategy should
+work for high voltage and high power as well. We have chosen
+Dp =0 .2026, which means that a frequency drop of 0.5%
+causes the torque (hence, the power) to increase by 100% (from
+nominal power). The voltage-drooping coefﬁcient is chosen as
+D
+q = 117.88. The time constants of the droop loops are chosen
+as τf =0 .002 s and τv =0 .002 s. The simulations were carried
+out in M ATLAB 7.4 with Simulink. The solver used in the
+simulations was ode23tb with a relative tolerance of 10 −3 and
+am a x i m u ms t e ps i z eo f0 . 2m s .
+The simulation was started at t =0 . A PLL was used for the
+initial synchronization, which will not be discussed in this paper
+because of page limit. For this reason, the ﬁrst half-second is
+omitted from our plots. The initial settings for Pset and Qset
+were zero. The circuit breaker was turned on att =1 s; the real
+power Pset =8 0 W was applied at t =2 s, and the reactive
+power Qset =6 0V a rwas applied at t =3 s. The drooping
+feedbacks were enabled at t =4 s, and then the grid voltage
+was decreased by 5% at t =5 s.
+A. With Nominal Grid Frequency
+The system responses are shown in Fig. 5(a). The frequency
+tracked the grid frequency very well all the time. The voltage
+difference between v and vg before any power demand was
+applied was very small, and the synchronization was very
+quick. There was no problem turning the circuit breaker on
+at t =1 s; there was not much transient response caused by
+this event. The synchronverter responded quickly both to the
+step change in real-power demand at t =2 s and to the step
+change in reactive power demand att =3 s, and it settled down
+in less than ten cycles without any error. The coupling effect
+between the real power and the reactive power is reasonably
+small, and the decoupling control of the real power and reactive
+power is left for future research. When the drooping mechanism
+was enabled at t =4 s, there was not much change to the real-
+power output as the frequency was not changed, but the reactive
+power dropped by about 53Var, about 50% of the power rating,
+because the local terminal voltagev was about 2.5% higher than
+the nominal value. When the grid voltage dropped by 5% at
+t =4 s, the local terminal voltage dropped to just below the
+nominal value. The reactive-power output then increased to just
+above the setpoint of 60 Var.
+B. With Lower Grid Frequency
+The simulation was repeated but with a grid frequency of
+49.95 Hz, i.e., 0.1% lower than the nominal one. The system
+Fig. 5. Simulation results. (a) With the nominal grid frequency. (b) With a
+lower grid frequency.
+responses are shown in Fig. 5(b). The synchronverter followed
+the grid frequency very well. When the synchronverter worked
+at the set mode, i.e., before t =4 s, the real and reactive
+power tracked their setpoints with negligible error. After the
+drooping mechanism was enabled att =4 s, the synchronverter
+increased the real power output by 20 W, i.e., 20% of the power
+rating, corresponding to the 0.1% drop of the frequency. This
+did not cause much change to the reactive-power output, just a
+slight adjustment corresponding to the slight change of the local
+voltage v. The responses in the previous subsection are given in
+the ﬁgure (dashed lines) for comparison.
+VI. E
+XPERIMENTAL RESULTS
+The theory and simulations developed previously were veri-
+ﬁed on an experimental synchronverter. For safety reasons, this
+is a low-voltage low-power synchronverter, but it is enough
+to demonstrate the technology. The parameters of the exper-
+imental synchronverter are roughly the same as those given
+in Table I, and the control parameters are the same. The
+synchronverter was connected to a three-phase 400-V 50-Hz
+grid via a circuit breaker and a step-up transformer. The sam-
+pling frequency of the controller is 5 kHz, and the switching
+frequency is 15 kHz. Many experiments were done, but only
+two typical cases are shown here. The experiments were carried
+out according to the following sequence of actions:
+1) starting the system but keeping all the IGBTs off; using
+the synchronization algorithm, which is not discussed
+here;
+
+=== PDF PAGE 8 ===
+1266 IEEE TRANSACTIONS ON INDUSTRIAL ELECTRONICS, VOL. 58, NO. 4, APRIL 2011
+Fig. 6. Experimental results when the grid frequency was < 50 Hz.
+(a) Synchronverter frequency. (b) V oltage difference. (c) Amplitude of v and
+vg.( d )P and Q.
+2) starting operation of the IGBTs, roughly at t =2 s;
+Pset = Qset =0 ;
+3) turning the circuit breaker on, roughly at t =6 s;
+4) applying Pset =7 0 W, roughly at t =1 1 s;
+5) applying Qset =3 0V a r, roughly at t =1 6 s;
+6) enabling the drooping mechanism, roughly at t =2 2 s;
+7) stopping the data recording, roughly at t =2 7 s.
+A. Case 1: Grid Frequency Was Lower Than 50 Hz
+During this experiment, the grid frequency was lower than
+50 Hz, increasing from 49.96 to 49.99 Hz. The synchronverter
+frequency followed the grid frequency very well, with notice-
+able transients after each action, as shown in Fig. 6(a). The
+local terminal voltage synchronized with the grid voltage very
+quickly once the inverter output was enabled, roughly att =2 s,
+as shown in Fig. 6(b) and (c). The connection to the grid went
+very smoothly, and there were no noticeable transients in the
+frequency or power (see Fig. 6). The power remained around
+zero but with bigger spikes. After the real-power demand was
+raised, it took less than ten cycles to reach the setpoint, which
+is very fast, and the overshoot was very small [see Fig. 6(d)].
+This action caused the frequency to respond with a big spike;
+the synchronverter initially “stored” some reactive power but
+then released it very quickly. After the reactive-power demand
+was raised, it took less than ten cycles to reach the setpoint
+with a small overshoot [see Fig. 6(d)]. The frequency dropped
+slightly, and the real power increased a bit, but all returned
+to normal very quickly. Because the drooping mechanism was
+not enabled, the real power and reactive power delivered by
+the synchronverter followed the reference values. After the
+drooping mechanism was enabled, roughly at t =2 2 s, the
+synchronverter started to respond to the deviations of the grid
+frequency and the voltage from their nominal values. The real
+power delivered was increased as the grid frequency was lower
+than the nominal value, while the reactive power was decreased
+as the local terminal voltage was higher than the nominal
+value.
+Fig. 7. Experimental results when the grid frequency was > 50 Hz.
+(a) Synchronverter frequency. (b) V oltage difference. (c) Amplitudes of v and
+vg.( d )P and Q.
+B. Case 2: Grid Frequency Was Higher Than 50 Hz
+During this experiment, the grid frequency was higher than
+50 Hz, increasing from 50.11 to 50.15 Hz. There was not much
+difference from the previous experiment before the drooping
+mechanism was enabled, except for a slight transient after the
+connection to the grid, and the synchronverter responded well
+to the instructions (see Fig. 7). After the drooping mechanism
+was enabled, roughly at t =2 1 s, the synchronverter started to
+respond to the highly deviated grid frequency (0.3%), which
+meant that the grid had excessive real power and dropped the
+real-power output by about 0.3%/0.5% × 100 = 60 to 10 W.
+The reactive power delivered was decreased slightly as the local
+terminal voltage was slightly higher than the nominal value,
+which means that the grid had excessive reactive power.
+VII. C
+ONCLUSION
+In this paper, the idea of operating an inverter as an SG has
+been developed and proved to be feasible after establishing
+a model for SGs to cover all the dynamics without any as-
+sumptions to the signals. The implementation and operation of
+such an inverter, including power regulation and load sharing,
+have been developed and described in detail. The mathematical
+model developed here can be used to investigate the stability of
+power systems dominated by parallel-operated inverters in dis-
+tributed generation. Both simulation and experimental results
+are provided.
+A
+CKNOWLEDGMENT
+The authors would like to thank Mr. T. Hornik for his help in
+preparing the experiments.
+REFERENCES
+[1] J. M. Carrasco, L. G. Franquelo, J. T. Bialasiewicz, E. Galvan,
+R. C. Portillo-Guisado, M. A. M. Prats, J. I. Leon, and
+N. Moreno-Alfonso, “Power-electronic systems for the grid integration of
+renewable energy sources: A survey,”IEEE Trans. Ind. Electron., vol. 53,
+no. 4, pp. 1002–1016, Aug. 2006.
+
+=== PDF PAGE 9 ===
+ZHONG AND WEISS: SYNCHRONVERTERS: INVERTERS THAT MIMIC SYNCHRONOUS GENERATORS 1267
+[2] S. Busquets-Monge, J. Rocabert, P. Rodriguez, S. Alepuz, and
+J. Bordonau, “Multilevel diode-clamped converter for photovoltaic
+generators with independent voltage control of each solar array,” IEEE
+Trans. Ind. Electron., vol. 55, no. 7, pp. 2713–2723, Jul. 2008.
+[3] J. Ekanayake, L. Holdsworth, and N. Jenkins, “Control of DFIG wind
+turbines,” Power Eng., vol. 17, no. 1, pp. 28–32, Feb. 2003.
+[4] M. Prodanovic and T. C. Green, “Control and ﬁlter design of three-phase
+inverters for high power quality grid connection,” IEEE Trans. Power
+Electron., vol. 18, no. 1, pp. 373–380, Jan. 2003.
+[5] C. K. Sao and P. W. Lehn, “Autonomous load sharing of voltage source
+converters,” IEEE Trans. Power Del. , vol. 20, no. 2, pp. 1009–1016,
+Apr. 2005.
+[6] K. De Brabandere, B. Bolsens, J. Van den Keybus, A. Woyte, J. Driesen,
+and R. Belmans, “A voltage and frequency droop control method for
+parallel inverters,” IEEE Trans. Power Electron., vol. 22, no. 4, pp. 1107–
+1115, Jul. 2007.
+[7] T. Loix, K. De Brabandere, J. Driesen, and R. Belmans, “A three-phase
+voltage and frequency droop control scheme for parallel inverters,” in
+Proc. 33rd IECON, 2007, pp. 1662–1667.
+[8] P. Piagi and R. H. Lasseter, “Autonomous control of microgrids,” in
+Proc. IEEE Power Eng. Soc. Gen. Meet. , 2006. [Online]. Available:
+http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=1708993
+[9] M. Prodanovic and T. C. Green, “High-quality power generation through
+distributed control of a power park microgrid,”IEEE Trans. Ind. Electron.,
+vol. 53, no. 5, pp. 1471–1482, Oct. 2006.
+[10] J. M. Guerrero, J. C. Vasquez, J. Matas, M. Castilla, and L. G. de Vicuna,
+“Control strategy for ﬂexible microgrid based on parallel line-interactive
+UPS systems,” IEEE Trans. Ind. Electron. , vol. 56, no. 3, pp. 726–736,
+Mar. 2009.
+[11] J. C. Vasquez, J. M. Guerrero, A. Luna, P. Rodriguez, and R. Teodorescu,
+“Adaptive droop control applied to voltage-source inverters operating in
+grid-connected and islanded modes,” IEEE Trans. Ind. Electron., vol. 56,
+no. 10, pp. 4088–4096, Oct. 2009.
+[12] “Proposed terms and deﬁnitions for ﬂexible AC transmission system
+(FACTS),” IEEE Trans. Power Del. , vol. 12, no. 4, pp. 1848–1853,
+Oct. 1997.
+[13] H.-P. Beck and R. Hesse, “Virtual synchronous machine,” inProc. 9th Int.
+Conf. EPQU, 2007, pp. 1–6.
+[14] Q.-C. Zhong and G. Weiss, “Static synchronous generators for distributed
+generation and renewable energy,” inProc. IEEE PES PSCE, Washington,
+DC, Mar. 2009, pp. 1–6.
+[15] J. Driesen and K. Visscher, “Virtual synchronous generators,” in Proc.
+IEEE Power Energy Soc. Gen. Meeting–Conversion and Delivery of
+Electrical Energy in the 21st Century , Jul. 2008, pp. 1–3.
+[16] K. Visscher and S. W. H. De Haan, “Virtual synchronous machines
+(VSG’s) for frequency stabilisation in future grids with a signiﬁcant share
+of decentralized generation,” in Proc. IET-CIRED Semin. Smart-Grids
+Distrib., Jun. 2008, pp. 1–4.
+[17] J. J. Grainger and W. D. Stevenson, Power System Analysis.N e w Y o r k :
+McGraw-Hill, 1994.
+[18] A. E. Fitzgerald, C. Kingsley, and S. D. Umans, Electric Machinery .
+New York: McGraw-Hill, 2003.
+[19] J. H. Walker, Large Synchronous Machines: Design, Manufacture and
+Operation. Oxford, U.K.: Oxford Univ. Press, 1981.
+[20] P. Kundur, Power System Stability and Control . New York: McGraw-
+Hill, 1994.
+[21] D. P. Kothari and I. J. Nagrath,Electric Machines, 3rd. New Delhi, India:
+McGraw-Hill, 2004.
+[22] A. J. Ellison, Electromechanical Energy Conversion . London, U.K.:
+George G. Harrap Co. Ltd., 1965.
+[23] Q.-C. Zhong, J. Liang, G. Weiss, C. M. Feng, and T. C. Green, “ H
+∞
+control of the neutral point in 4-wire 3-phase DC-AC converters,” IEEE
+Trans. Ind. Electron., vol. 53, no. 5, pp. 1594–1602, Oct. 2006.
+[24] Q.-C. Zhong, L. Hobson, and M. G. Jayne, “Classical control of the
+neutral point in 4-wire 3-phase DC-AC converters,”J. Elect. Power Qual.
+Utilisation, vol. 11, no. 2, pp. 111–119, 2005.
+Qing-Chang Zhong (M’04–SM’04) received the
+Diploma degree in electrical engineering from
+Hunan Institute of Engineering, Xiangtan, China, in
+1990, the M.Sc. degree in electrical engineering from
+Hunan University, Changsha, China, in 1997, the
+Ph.D. degree in control theory and engineering from
+Shanghai Jiao Tong University, Shanghai, China,
+in 1999, and the Ph.D. degree in control and power
+engineering (awarded the Best Doctoral Thesis Prize)
+from Imperial College London, London, U.K., in
+2004, respectively.
+He was with the Technion—Israel Institute of Technology, Haifa, Israel;
+Imperial College London, London, U.K.; and the University of Glamorgan,
+Treforest, U.K.; and the University of Liverpool, Liverpool, U.K. He is cur-
+rently with Loughborough University, Leicestershire, U.K. He is the author
+or coauthor of three research monographs: Robust Control of Time-Delay
+Systems (Springer-Verlag 2006), Control of Integral Processes with Dead Time
+(Springer-Verlag 2010), Control of Power Inverters for Distributed Generation
+and Renewable Energy (Wiley-IEEE Press, scheduled to appear in 2011). His
+current research focuses on robust and H-inﬁnity control, time-delay systems,
+process control, power electronics, electric drives and electric vehicles, distrib-
+uted generation, and renewable energy.
+Dr. Zhong is a Fellow of the Institution of Engineering and Technology
+(Institution of Electrical Engineers) and a Senior Research Fellow of the Royal
+Academy of Engineering/Leverhulme Trust, U.K. (2009–2010).
+George Weiss received the B.S. degree in control
+engineering from the Polytechnic Institute of
+Bucharest, Bucharest, Romania, in 1981, and
+the Ph.D. degree in applied mathematics from
+Weizmann Institute, Rehovot, Israel, in 1989.
+He was with Brown University, Providence, RI;
+Virginia Polytechnic Institute and State University,
+Blacksburg; Weizmann Institute, Ben-Gurion Uni-
+versity, Beer Sheva, Israel; the University of Exeter,
+Exeter, U.K.; and Imperial College London, London,
+U.K. Currently, he is with Tel Aviv University,
+Ramat Aviv, Israel. He is a coauthor (with M. Tucsnak) of the bookObservation
+and Control for Operator Semigroups(Birkhäuser, 2009). His research interests
+are distributed parameter systems, operator semigroups, control applied in
+power electronics, repetitive control, and periodic (in particular, sampled-data)
+linear systems.

@@ -1,0 +1,162 @@
+[
+  {
+    "paragraph": 6,
+    "before": "选取高水平综述、关注方法及研究的代表性期刊",
+    "after": "选取高水平综述、关注支撑方法的代表性研究论文"
+  },
+  {
+    "paragraph": 9,
+    "before": "Tielens 等在2016年的",
+    "after": "Tielens 等于2016年在"
+  },
+  {
+    "paragraph": 9,
+    "before": "《Renewable & Sustainable Energy Reviews》的综述",
+    "after": "《Renewable & Sustainable Energy Reviews》发表的综述"
+  },
+  {
+    "paragraph": 9,
+    "before": "额定容量之比",
+    "after": "额定视在功率之比"
+  },
+  {
+    "paragraph": 10,
+    "before": "同主题综进一步讨论扩展到",
+    "after": "同主题综述进一步将讨论扩展到"
+  },
+  {
+    "paragraph": 13,
+    "before": "近10年间",
+    "after": "近二十年间"
+  },
+  {
+    "paragraph": 13,
+    "before": "即Morren等2006年",
+    "after": "即Morren等于2006年"
+  },
+  {
+    "paragraph": 13,
+    "before": "提出利用变速风机",
+    "after": "提出的利用变速风机"
+  },
+  {
+    "paragraph": 13,
+    "before": "参与电网频率支撑得到了很多引用于关注",
+    "after": "参与电网频率支撑的方案，得到了很多引用与关注"
+  },
+  {
+    "paragraph": 14,
+    "before": "类似的，",
+    "after": "类似地，"
+  },
+  {
+    "paragraph": 14,
+    "before": "使其呈现类似同步机的外部行为也得到了客观的引用与关注",
+    "after": "使其呈现类似同步机的外部行为，这一方案也得到了可观的引用与关注"
+  },
+  {
+    "paragraph": 15,
+    "before": "能量来自哪里，这些能量如何",
+    "after": "能量来自哪里，也需要明确这些能量如何"
+  },
+  {
+    "paragraph": 15,
+    "before": "近年来最新的研究更加专注于",
+    "after": "近年来的部分研究进一步关注"
+  },
+  {
+    "paragraph": 17,
+    "before": "解决方法明确后",
+    "after": "代表性支撑方法介绍后"
+  },
+  {
+    "paragraph": 17,
+    "before": "作用在系统频率的效果",
+    "after": "对系统频率的作用效果"
+  },
+  {
+    "paragraph": 19,
+    "before": "以综述角度于",
+    "after": "从综述角度在"
+  },
+  {
+    "paragraph": 19,
+    "before": "《IEEE Open Journal of Industry Application》",
+    "after": "《IEEE Open Journal of Industry Applications》"
+  },
+  {
+    "paragraph": 19,
+    "before": "。并梳理了",
+    "after": "。该文还梳理了"
+  },
+  {
+    "paragraph": 19,
+    "before": "关于当前电力电子化电力系统惯量的研究不足",
+    "after": "关于当时电力电子化电力系统中构网控制的研究不足"
+  },
+  {
+    "paragraph": 22,
+    "before": "电力电子化电力系统惯量以不同方法参与频率调节后",
+    "after": "电力电子化电力系统中的装置以不同方法参与频率调节后"
+  },
+  {
+    "paragraph": 22,
+    "before": "电力系统的能量需要恢复",
+    "after": "参与支撑的装置可能需要恢复其能量状态"
+  },
+  {
+    "paragraph": 23,
+    "before": "未预留功率（即电力调度和机组组合上常说的“裕度”）",
+    "after": "未预留有功备用（即未通过降载运行预留额外的有功出力裕度）"
+  },
+  {
+    "paragraph": 23,
+    "before": "相较 Morren 等的论文研究更深入，更细节的是进一步关注",
+    "after": "该研究相较 Morren 等的论文更深入、更细致地关注了"
+  },
+  {
+    "paragraph": 24,
+    "before": "次年，Tayyebi",
+    "after": "2020年，Tayyebi"
+  },
+  {
+    "paragraph": 24,
+    "before": "首次考虑了",
+    "after": "同时考虑了"
+  },
+  {
+    "paragraph": 24,
+    "before": "交流限流这些电流约束",
+    "after": "交流限流等动态因素与电流约束"
+  },
+  {
+    "paragraph": 24,
+    "before": "因此，因此，",
+    "after": "因此，在该研究中，"
+  },
+  {
+    "paragraph": 24,
+    "before": "缺乏针对限流非线性的",
+    "after": "尚需补充针对限流非线性的"
+  },
+  {
+    "paragraph": 25,
+    "before": "将电力电子化电力系统的范围",
+    "after": "将电力电子化电力系统惯量支撑的评价范围"
+  },
+  {
+    "paragraph": 26,
+    "before": "得到结论，",
+    "after": "由此得到结论，"
+  },
+  {
+    "paragraph": 31,
+    "before": "我个人认为未来本领域的更关注",
+    "after": "我个人认为未来本领域应更加关注"
+  },
+  {
+    "paragraph": 31,
+    "before": "在相同资源条件和扰动序列下",
+    "after": "在各方案采用相同初始资源条件和同一组扰动序列的情况下"
+  }
+]

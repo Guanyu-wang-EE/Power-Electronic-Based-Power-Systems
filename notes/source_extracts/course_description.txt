@@ -1,0 +1,59 @@
+附件7
+博士研究生课程内容简介
+
+课程编号：EE6005							课程名称：电力电子化电力系统
+英文译名：Electric electronic power system
+适用学科：电气工程
+先修课程：电力电子技术、自动控制理论
+开课院（系）：机电工程与自动化学院
+
+中文内容简介： 
+电力电子技术作为智能电网中的关键支撑技术，近年来迅速成为研究热点并得到国内外研究人员的广泛关注，不同学术观点纷纷涌现，新的变流技术与装置层出不穷，风电、光伏、储能等新能源装备大规模接入，一系列柔性输配电工程投入运行。本课程介绍电力电子化电力系统的发展历程与基本原理，讲述瞬时功率理论与电网锁相技术。另一方面还介绍了基于电力系统发电侧、输电侧、配电侧依次介绍相关的电力电子关键技术，包括：光伏、风力发电系统及其控制、模块化多电平变换器及其在柔性交流输电与柔性直流输电中的应用、以及电力电子变压器等柔性配电技术。
+
+英文内容简介： 
+As a key supporting technology in smart grid, power electronics technology has rapidly become a research hotspot in recent years and has received extensive attention from researchers at home and abroad. Different academic views have emerged one after another. New converter technologies and devices have emerged one after another. New energy equipment such as wind power, photovoltaic, energy storage, etc. have been connected on a large scale. A series of flexible power transmission and distribution projects have been put into operation. This course introduces the development history and basic principles of power electronic power system, and describes the instantaneous power theory and power grid phase-locked technology. On the other hand, it also introduces the key technologies of power electronics based on the generation side, transmission side and distribution side of the power system, including photovoltaic, wind power generation system and its control, modular multilevel converter and its application in flexible AC transmission and flexible DC transmission, as well as flexible distribution technologies such as power electronic transformer.
+
+主要教材：
+赵婉君. 高压直流输电工程技术[M]. 北京: 中国电力出版社, 2011.
+徐政等. 柔性直流输电系统[M]. 北京市: 机械工业出版社, 2012.
+汤广福. 基于电压源换流器的高压直流输电技术[M]. 北京: 中国电力出版社, 2010.
+B. Wu. High Power Converters and AC Drives[M]. Wiley-IEEE Press, 2017.
+国网江苏省电力公司. 统一潮流控制器工程实践——南京西环网统一潮流控制器示范工程[M]. 北京: 中国电力出版社, 2015.
+
+参考文献：
+Hirofumi Akagi等. Instantaneous Power Theory and Applications to Power Conditioning[M]. Wiley-IEEE Press, 2007
+C.K. Kim. HVDC Transmission Power Conversion Applications in Power Systems[M]. Wiley-IEEE Press, 2009.
+Remus Teodorescu等，Grid Converters for Photovoltaic and Wind Power Systems[M]., Wiley-IEEE Press, 2011
+
+
+
+Course Information for Doctoral Candidate
+
+
+Course Number: EE6005                    
+Course Name: Electric electronic power system
+
+Subjects related: Electrical Engineering
+
+Requirement for the Course: Power electronic technology, Automatic control theory
+
+Faculty or Department：School of Mechanical Engineering and Automation
+
+Course Description
+As a key supporting technology in smart grid, power electronics technology has rapidly become a research hotspot in recent years and has received extensive attention from researchers at home and abroad. Different academic views have emerged one after another. New converter technologies and devices have emerged one after another. New energy equipment such as wind power, photovoltaic, energy storage, etc. have been connected on a large scale. A series of flexible power transmission and distribution projects have been put into operation. This course introduces the development history and basic principles of power electronic power system, and describes the instantaneous power theory and power grid phase-locked technology. On the other hand, it also introduces the key technologies of power electronics based on the generation side, transmission side and distribution side of the power system, including photovoltaic, wind power generation system and its control, modular multilevel converter and its application in flexible AC transmission and flexible DC transmission, as well as flexible distribution technologies such as power electronic transformer.
+
+Main teaching materials
+赵婉君. 高压直流输电工程技术[M]. 北京: 中国电力出版社, 2011.
+徐政等. 柔性直流输电系统[M]. 北京市: 机械工业出版社, 2012.
+汤广福. 基于电压源换流器的高压直流输电技术[M]. 北京: 中国电力出版社, 2010.
+B. Wu. High Power Converters and AC Drives[M]. Wiley-IEEE Press, 2017.
+国网江苏省电力公司. 统一潮流控制器工程实践——南京西环网统一潮流控制器示范工程[M]. 北京: 中国电力出版社, 2015.
+
+Reference
+Hirofumi Akagi等. Instantaneous Power Theory and Applications to Power Conditioning[M]. Wiley-IEEE Press, 2007
+C.K. Kim. HVDC Transmission Power Conversion Applications in Power Systems[M]. Wiley-IEEE Press, 2009.
+Remus Teodorescu等，Grid Converters for Photovoltaic and Wind Power Systems[M]., Wiley-IEEE Press, 2011
+
+
+
+

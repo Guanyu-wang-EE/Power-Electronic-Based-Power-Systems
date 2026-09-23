@@ -1,0 +1,1773 @@
+=== PDF PAGE 1 ===
+1
+Frequency Stability of Synchronous Machines and
+Grid-Forming Power Converters
+Ali Tayyebi, Dominic Groß, Member, IEEE, Adolfo Anta, Friederich Kupzog and Florian Dörﬂer, Member, IEEE
+Abstract—An inevitable consequence of the global power sys-
+tem transition towards nearly 100% renewable-based generation
+is the loss of conventional bulk generation by synchronous
+machines, their inertia, and accompanying frequency and voltage
+control mechanisms. This gradual transformation of the power
+system to a low-inertia system leads to critical challenges in
+maintaining system stability. Novel control techniques for con-
+verters, so-called grid-forming strategies, are expected to address
+these challenges and replicate functionalities that so far have
+been provided by synchronous machines. This article presents a
+low-inertia case study that includes synchronous machines and
+converters controlled under various grid-forming techniques. In
+this work 1) the positive impact of the grid-forming converters on
+the frequency stability of synchronous machines is highlighted, 2)
+a qualitative analysis which provides insights into the frequency
+stability of the system is presented, 3) we explore the behavior of
+the grid-forming controls when imposing the converter dc and
+ac current limitations, 4) the importance of the dc dynamics in
+grid-forming control design as well as the critical need for an
+effective ac current limitation scheme are reported, and lastly 5)
+we analyze how and when the interaction between the fast grid-
+forming converter and the slow synchronous machine dynamics
+can contribute to the system instability.
+I. I NTRODUCTION
+At the heart of the energy transition is the change in
+generation technology; from fossil fuel based generation to
+converter interfaced renewable generation [1]. One of the
+major consequences of this transition towards a nearly 100%
+renewable system is the gradual loss of synchronous machines
+(SMs), their inertia, and control mechanisms. This loss of the
+rotational inertia changes the nature of the power system to
+a low-inertia network resulting in critical stability challenges
+[1]–[3]. On the other hand, low-inertia power systems are char-
+acterized by large-scale integration of generation interfaced by
+power converters, allowing frequency and voltage regulation
+at much faster time-scales compared to SMs [1], [4].
+Indeed, power converters are already starting to provide
+new ancillary services, modifying their active and reactive
+This work was partially funded by the independent research fund of the
+the power system digitalization group at the Electric Energy Systems (EES)
+competence unit of the Austrian Institute for Technology (AIT), ETH Zürich
+funds, and by the European Unions Horizon 2020 research and innovation
+programme under grant agreement No. 691800. This article reﬂects only the
+authors views and the European Commission is not responsible for any use
+that may be made of the information it contains. A. Tayyebi (the corresponding
+author) is with AIT, 1210 Vienna, Austria, and also with the Automatic
+Control Laboratory, ETH Zürich, Switzerland. D. Groß is with the Department
+of Electrical and Computer Engineering, University of Wisconsin-Madison,
+Madison, WI 53706, USA. A. Anta and F. Kupzog are with AIT, and F. Dörﬂer
+is with the Automatic Control Laboratory, ETH Zürich, 8092 Zürich, Switzer-
+land; E-mail: {ali.tayyebi-khameneh,adolfo.anta,friederich.kupzog}@ait.ac.at,
+dominic.gross@wisc.edu, and dorﬂer@ethz.ch.
+power output based on local measurements of frequency and
+voltage. However, because of the dependency on frequency
+measurements these grid-following control techniques only
+replicate the instantaneous inertial response of SMs after a
+contingency with a delay and result in degraded performance
+on the time scales of interest [5]. To resolve this issue, grid-
+forming converters (GFCs) are envisioned to be the corner-
+stone of future power systems. Based on the properties and
+functions of SMs, it is expected that grid-forming converters
+must support load-sharing/drooping, black-start, inertial re-
+sponse, and hierarchical frequency/voltage regulation. While
+these services might not be necessary in a future converter-
+based grid, a long transition phase is expected, where SMs
+and GFCs must be able to interact and ensure system stability.
+Several grid-forming control strategies have been proposed
+in recent years [4]. Droop control mimics the speed droop
+mechanism present in SMs and is a widely accepted baseline
+solution [6]. As a natural further step, the emulation of SM
+dynamics and control led to so-called virtual synchronous
+machine (VSM) strategies [7]–[9]. Recently, matching control
+strategies that exploit structural similarities of converters and
+synchronous machine and match their dynamic behavior have
+been proposed [10]–[13]. In contrast, virtual oscillator con-
+trol (VOC) uses GFCs to mimic the synchronizing behavior
+of Liénard-type oscillators and can globally synchronize a
+converter-based power system [14]. However, the nominal
+power injection of VOC cannot be speciﬁed. This limitation
+is overcome by dispatchable virtual oscillator control (dVOC)
+[15]–[17] that ensures synchronization to a pre-speciﬁed op-
+erating point that satisﬁes the ac power ﬂow equations.
+In this article, the dynamics of the converter dc-link ca-
+pacitor, the response time of the dc power source, and its
+current limits is explicitly considered. We review four dif-
+ferent grid-forming control strategies and combine them with
+standard low-level cascaded control design accounting for the
+ac voltage control and the ac current limitation and control
+[18]. We explore the various performance aspects of GFC
+control techniques in an electromagnetic transients (EMT)
+simulation of the IEEE 9-bus test system, namely: 1) the
+impact of GFCs on the frequency performance metrics e.g.,
+nadir and rate of change of frequency (RoCoF) [19]–[22], 2)
+the response of GFCs under large load disturbances, 3) their
+behavior when imposing dc and ac current limitations, and 4)
+their response to the loss of SM and performance in a pure
+converter-based system. Furthermore, we provide an insightful
+qualitative analysis of the simulation results. The models used
+in this work are available online [23].
+This study highlights the positive impact of GFCs on im-
+arXiv:2003.04715v1  [eess.SY]  8 Mar 2020
+
+=== PDF PAGE 2 ===
+2
+Gdc Cdc
+−
++
+vdc
+ix is,αβ R L
+C
++
+−
+vαβ
+iαβ
++
+−
+vs,αβ
+mαβ
+1
+τdcs + 1
+idciτi⋆
+dc
+dc energy source model
+Fig. 1: Converter model in αβ-coordinates with detailed dc
+energy source model based on (1)-(3).
+proving the standard power system frequency stability metrics.
+Moreover, we observe that limiting the GFCs dc or ac current
+accompanied by the interaction of fast converters and slow
+synchronous machine dynamics can destabilize some grid-
+forming controls. This observation, highlights the importance
+of the dc dynamics in grid-forming control design as well as
+the critical need for an ac current limiting mechanism. Further-
+more, we reveal a potentially destabilizing interaction between
+the fast synchronization of GFCs and the slow response of
+SMs (see [16], [24] for a similar observation on the interaction
+of GFCs and line dynamics). Lastly, this study shows that an
+all-GFCs (i.e., no-inertia) system can exhibit more resilience
+than a mixed SM-GFCs (i.e., low-inertia) system with respect
+to the large load variations.
+The remainder of this article is structured as follows: Sec-
+tion II reviews the modeling approach. Section III presents the
+system dynamics and adopted grid-forming control techniques.
+The simulation-based analysis of the study is discussed in
+Section IV. Section V presents a qualitative analysis of the
+observations made in case studies. The concluding statements
+and agenda of future work are reported in Section VI. And
+the choice of control parameters is described in Appendix A.
+II. M ODEL DESCRIPTION
+Throughout this study, we use a test system comprised
+of power converters and synchronous machines. This section
+describes the models of the individual devices and components
+[23].
+A. Converter Model
+To begin with, we consider the converter model illustrated
+in Figure 1 in αβ-coordinates [13], [25]
+Cdc ˙vdc = idc−Gdcvdc− ix, (1a)
+L˙is,αβ = vs,αβ− Ris,αβ− vαβ, (1b)
+C ˙vαβ = is,αβ− iαβ, (1c)
+where Cdc denotes the dc-link capacitance, Gdc models dc
+losses, and, L, C, and R respectively denote the ﬁlter induc-
+tance, capacitance, and resistance. Moreover, vdc represents the
+dc voltage, idc is the current ﬂowing out of the controllable dc
+current source, mαβ denotes the modulation signal of the full-
+bridge averaged switching stage model, ix := (1/2)m⊤
+αβis,αβ
+denotes the net dc current delivered to the switching stage,
+and is,αβ and vs,αβ := (1/2)mαβvdc respectively are the ac
+switching node current and voltage (i.e., before the output
+ﬁlter), iαβ and vαβ are the output current and voltage.
+To obtain a realistic model of the dc energy source, we
+model its response time by a ﬁrst order system
+τdc˙iτ = i⋆
+dc− iτ , (2)
+where i⋆
+dc is the dc current reference, τdc is the dc source time
+constant, and iτ denotes the current provided by the dc source.
+Moreover, the dc source current limitation is modeled by the
+saturation function
+idc = sat
+(
+iτ , idc
+max
+)
+=
+{
+iτ if |iτ| <|idc
+max|,
+sgn (iτ) idc
+max if |iτ|≥| idc
+max|, (3)
+where idc
+max is the maximum dc source current. Note that we
+implicitly assume that some storage element is present so that
+the dc source can support bidirectional power ﬂow. In practice,
+the limit imposed by (3) corresponds to current limits of a dc-
+dc converter, current limits of an energy storage system, or PV
+/ wind power generation limits. The impact of the dc source
+limitation (3) is investigated in Section IV. It is noteworthy
+that the converter must also limit its ac current to protect
+its semiconductor switches [26]. This ac current limitation is
+typically imposed via converter control design (see Section III
+for details).
+B. Synchronous Machine Model
+In this work we adopt an 8th order (i.e., including six electri-
+cal and two mechanical states), balanced, symmetrical, three-
+phase SM with a ﬁeld winding and three damper windings on
+the rotor [2, Fig. 3.1]
+˙θ = ω, (4a)
+J ˙ω = Tm− Te− Tf, (4b)
+˙ψs,dq = vs,dq− rsis,dq−J 2ψs,dq, (4c)
+˙ψf,d = vf,d− rf,dif,d, (4d)
+˙ψD = vD−R DiD, (4e)
+where θ denotes the rotor angle, J is the inertia constant, ω is
+the rotor speed, Tm, Te and Tfw denote the mechanical torque,
+electrical torque, and the friction windage torque (see [2, Sec.
+5.7]). Moreover, ψs,dq = [ψs,d ψs,q]⊤, vs,dq = [vs,d vs,q]⊤, and
+is,dq = [is,d is,q]⊤ denote the stator winding ﬂux, voltage, and
+current in dq-coordinates (with angle θ as in (4a)), J2 =
+[ 0−1
+1 0 ] denotes the 90◦ rotation matrix, ψf,d, vf,d, and if,d denote
+the d-axis ﬁeld winding ﬂux, voltage and current. Furthermore,
+rs and rf,d denote the stator and ﬁeld winding resistances,
+ψD = [ ψ1d ψ1q ψ2q]⊤, vD = [ v1d v1q v2q]⊤ and iD =
+[i1d i1q i2q]⊤ are the linkage ﬂux, voltage and current associ-
+ated with three damper windings and RD = diag (r1d, r1q, r2q)
+denotes the diagonal matrix of the damper winding resistances.
+Note that the windage friction (i.e., modeling friction between
+the rotor and air) term is commonly expressed as a speed
+dependent term e.g., Tf = Dfω [2, Sec. 5.7] it is typically
+negligible for system-level studies and is included here for the
+sake of completeness and to highlight structural similarities of
+the SM and two-level voltage source converter with the control
+presented in Section III-E. Furthermore, the damping torque
+associated with the damper windings is included in the SM
+model (4) via the damper winding dynamics (4e). For more
+
+=== PDF PAGE 3 ===
+3
+details on the SM modeling and parameters computation the
+reader is referred to [2, Sec. 3.3], [3, Chap. 4].
+We augment the system (4) with a ST1A type excitation
+dynamics with built-in automatic voltage regulator (A VR) [27,
+Fig. 21]. To counteract the well-known destabilizing effect of
+the A VR on the synchronizing torque, we equip the system
+with a simpliﬁed power system stabilizer comprised of a two-
+stage lead-lag compensator [3, Sec. 12.5]. Lastly, the governor
+and turbine dynamics are respectively modeled by proportional
+speed droop control and ﬁrst order turbine dynamics
+p = p⋆ + dp (ω⋆− ω) , (5a)
+τg ˙pτ = p− pτ , (5b)
+where p⋆ denotes the power set-point, p is the governor
+output, dp denotes the governor speed droop gain, and ω⋆
+and ω denote nominal and measured frequency, respectively.
+Furthermore, τg denotes the turbine time constant and pτ
+denotes the turbine output power. We refer the reader to
+[24, Fig. 2] for an illustration of the interplay between the
+SM model, the excitation dynamics, the PSS and governor
+dynamics. Lastly, the Matlab/Simulink implementation of the
+SM model can be found in [23].
+Fig.1 =:
+iαβ
+vαβ
+L V/MV
+L V/MV
+≡
+niαβ L V/MV
+vαβ
+module 1
+...
+...
+module n
+Fig. 2: Equivalent model of an individual converter module
+(left), large-scale multi-converter system consisting of n iden-
+tical modules (middle), and aggregate model (right).
+1 4 9
+5
+6
+3
+8
+7
+2
+SM GFC
+GFC
+Fig. 3: IEEE 9-bus test system with a synchronous machine,
+two large-scale multi-converter systems (i.e., aggregate GFCs),
+and constant impedance loads.
+C. Network Model
+To study the transmission level dynamics of a low-inertia
+power system, we use Sim Power Systems to perform an EMT
+simulation of the IEEE 9-bus test system shown in Figure 3
+[4], [28]. We model the lines via nominal π sections (i.e., with
+RLC dynamics), model the transformers via three-phase linear
+transformer models, and consider constant impedance loads
+(see Table I for the parameters). We emphasize that the line
+dynamics cannot be neglected in the presence of grid-forming
+converters due to potential adverse interactions between their
+fast response and the line dynamics [16], [24], [29].
+Remark 1. (Aggregate Converter Model)
+In this case study, each GFC in Figure 3 is an aggregate
+model of 200 commercial converter modules (see Table I for
+the parameters). Each module is rated at 500 kV A and the
+aggregate model is rated at 100 MV A, which is equal to the
+SM rating. Each module is interfaced to a medium voltage
+line via a LV-MV transformer (see Figure 2). We derive the
+parameters of the aggregate transformer model by assuming
+a parallel connection of 100 commercial transformers rated at
+1.6 MV A (see Table I). A detailed presentation and derivation
+of the model aggregation is out of the scope of this work, but
+we follow developments analogous to [30]–[32] in deriving
+the equivalent aggregate converter parameters.
+III. G RID -FORMING CONTROL ARCHITECTURES
+Grid-forming control strategies control (see Figure 4) a
+converter through the reference current i⋆
+dc for the dc energy
+source (1a) and the modulation signal mαβ for the dc-ac
+conversion stage (1) (see Figure 1). In the following, we brieﬂy
+review the low-level cascaded control design (i.e., ac voltage
+control, current limitation and control) for two-level voltage
+source converters that tracks a voltage reference provided by
+a reference model (i.e., grid-forming control). Moreover, we
+propose a controller for the converter dc voltage which deﬁnes
+the reference dc current. Because their design is independent
+of the choice of the reference model, we ﬁrst discuss the
+cascaded voltage / current control and the dc-side control.
+Subsequently, we review four common grid-forming control
+strategies. For each strategy, we describe the angle dynamics,
+frequency dynamics and ac voltage magnitude regulation.
+Throughout this section we will employ the three phase abc,
+αβ and dq-coordinates (see [25, Sec. 4.5 and 4.6] for details on
+the transformations). We remind the reader that the Simulink
+implementation of the controls presented in the forthcoming
+subsections is available online [23].
+A. Low-Level Cascaded Control Design
+1) AC Voltage Control: we employ a standard converter
+control architecture that consists of a reference model pro-
+viding a reference voltage ˆvdq with angle ∠ˆvdq = θ and
+magnitude∥ˆvdq∥. The modulation signal mαβ is determined
+by cascaded proportional-integral (PI) controllers that are im-
+plemented in dq-coordinates (rotating with the reference angle
+θ) and track the voltage reference ˆvdq (see [18]). The voltage
+
+=== PDF PAGE 4 ===
+4
+dc voltage
+control
+(Section III-B)
+p⋆,v⋆
+dc
+p,v dc,i x
+i⋆
+dc
+reference
+model (Section
+III-C to III-F)
+p⋆,q⋆,ω⋆,v⋆,v⋆
+dc
+p,q, vαβ, iαβ,v dc
+ac voltage
+control
+(Section III-A)
+ˆvdq
+vdq
+idq
+ac current
+limitation
+(Section III-A)
+i⋆
+s,dq
+∥is,dq∥
+iac
+max
+ac current
+control
+(Section III-A)
+¯i⋆
+s,dq
+is,dq
+vdq
+modulation
+(Section III-A)
+v⋆
+s,αβ
+v⋆
+dc
+θ
+mαβ
+ac-side controldc-side control low-level cascaded control
+Fig. 4: Grid-forming control architecture with reference models described in subsections III-C to III-F.
+tracking error ˆvdq− vdq is used to compute the reference
+i⋆
+s,dq = [i⋆
+sd i⋆
+sq]⊤ for the switching node current is,dq
+˙xv,dq = ˆvdq− vdq, (6a)
+i⋆
+s,dq := idq + CωJ2vdq
+  
+feed-forward terms
++Kv,p (ˆvdq− vdq) +Kv,ixv,dq
+  
+PI control
+(6b)
+here xv,dq = [ xv,d xv,q]⊤ denotes the integrator state,
+vdq = [ vd vq]⊤ denotes the output voltage measurement,
+ˆvdq = [ˆvd 0]⊤ denotes the reference voltage, idq = [ id iq]⊤
+denotes the output current, I2 is the 2-D identity matrix,
+Kv,p = kv,pI2 andKv,i = kv,iI2 denote diagonal matrices
+of proportional and integral gains, respectively.
+2) AC Current Limitation: We assume that the underlying
+current controller or low-level protections of the converter
+limit the ac current. We model this in abstraction by scaling
+down the reference current∥i⋆
+s,dq∥ if it exceeds the pre-deﬁned
+converter current limit iac
+max [33, Sec. III], i.e.,
+¯i⋆
+s,dq :=
+{
+i⋆
+s,dq if ∥is,dq∥≤ iac
+max,
+γii⋆
+s,dq if ∥is,dq∥ > iac
+max, (7)
+where ¯i⋆
+s,dq denotes the limited reference current that preserves
+the direction of i⋆
+s,dq and γi :=
+(
+iac
+max/∥i⋆
+s,dq∥
+)
+. We emphasize
+that limiting the ac current can have a strong impact on
+the stability margins and dynamics of grid-forming power
+converters [34]. While numerous different strategies have been
+proposed to limit the ac current injection of voltage source
+converters with grid-forming controls [26], [33], [35]–[39] the
+problem of designing a robust ac current limitation strategy
+that effectively reacts to the load-induced over-current and
+grid faults is an open research problem. Moreover, complex
+current limitation strategies typically require careful tuning
+of the controllers. Therefore, to provide a clear and concise
+investigation of the behavior of the existing grid-forming
+control solutions, we use the simple ac current limiting strategy
+(7).
+3) AC Current Control: in order to implement this scheme,
+a PI controller for the current is,dq = [is,d is,q]⊤ is used to track
+¯i⋆
+s,dq
+˙xi,dq = ¯i⋆
+s,dq− is,dq, (8a)
+v⋆
+s,dq := vdq +Zis,dq
+  
+feed-forward terms
++Ki,p
+(
+i⋆
+s,dq− is,dq
+)
++Ki,ixi, dq
+  
+PI control
+, (8b)
+whereZ = LωJ2 + RI2, v⋆
+s,dq = [v⋆
+s,d v⋆
+s,q]⊤ is the reference
+for the switching node voltage (i.e., before output ﬁlter in
+Figure 1), xi,dq = [xi,d xi,q]⊤ denotes the integrator state, and
++ kv,p + kv,i
+s +
+−Cω
+ˆvd
+−
+vd
+id
++ kv,p + kv,i
+s +
++Cω
+ˆvq
+−
+vq
+iq
++ ki,p + ki,i
+s +
+−Lω + R
+i⋆
+s,d
+−
+is,d
+vd
+v⋆
+s,d
++ ki,p + ki,i
+s +
++Lω + R
+i⋆
+s,q
+−
+is,q
+vq
+v⋆
+s,q
+current limitation
+∥is,dq∥iac
+max
+¯i⋆
+s,d
+¯i⋆
+s,q
+voltage control current control
+equation (7)
+Fig. 5: Block diagram of the low-level cascaded control design
+(6)-(8) in dq-coordinates rotating with the angle θ provided by
+the reference model.
+Ki,p = kp,iI2 andKi,i = ki,iI2 denote the diagonal matrices
+of proportional and integral gains, respectively. Note that the
+ﬁrst two terms of the right hand side of (6b) and (8b) are feed-
+forward terms. Finally, the modulation signal mαβ is given by
+mαβ =
+2v⋆
+s,αβ
+v⋆
+dc
+, (9)
+where v⋆
+s,αβ is the αβ-coordinates image of v⋆
+s,dq deﬁned in
+(8) and v⋆
+dc denotes the nominal converter dc voltage.
+B. DC Voltage Control
+The dc current reference i⋆
+dc that is tracked by the control-
+lable dc source (2) is given by a proportional control for the
+dc voltage and feed-forward terms based on the nominal ac
+active power injection p⋆ and the ﬁlter losses
+i⋆
+dc = kdc (v⋆
+dc− vdc)  
+proportional control
++ p⋆
+v⋆
+dc
++
+(
+Gdcvdc + vdcix− p
+v⋆
+dc
+)
+  
+power injection and loss feed-forward
+, (10)
+where vdcix is the dc power ﬂowing into the switches, p is the
+ac power injected into the grid, and the last term on the right
+hand side of (10) implements a feed-forward power control
+that compensates the ﬁlter losses. The loss compensation is
+required to ensure exact tracking of the power reference by
+matching control (see Section III-E) and also improves the dc
+voltage regulation for the other control strategies considered
+in this study. Thus, to employ an identical dc voltage control,
+we apply (10) for all control strategies discussed throughout
+this work.
+C. Droop Control
+Droop control resembles the speed droop property (5a) of
+the SM governor [6] and trades off deviations of the power
+
+=== PDF PAGE 5 ===
+5
+injection (from its nominal value p⋆) and frequency deviations
+(from ω⋆)
+˙θ = ω, (11a)
+ω = ω⋆ + dω (p⋆− p) , (11b)
+where dω denotes the droop gain. To replicate the service
+provided by the automatic voltage regulator (A VR) of syn-
+chronous machines we use a PI controller acting on the output
+voltage error
+ˆvd = kp (v⋆−∥ vdq∥) + ki
+∫ t
+0
+(v⋆−∥ vdq(τ)∥) dτ. (12)
+to obtain the direct axis reference ˆvd for the underlying voltage
+loop ( v⋆ and∥vdq∥ are the reference and measured voltage
+magnitude). We remark that ˆvq = 0 and the reactive power
+injection varies such that exact voltage regulation is achieved.
+D. Virtual Synchronous Machine
+Many variations of virtual synchronous machines (VSMs)
+have been proposed [7], [8]. In this work, we consider the
+frequency dynamics induced by the synchronverter [8]
+˙θ = ω, (13a)
+Jr ˙ω = 1
+ω⋆ (p⋆− p) + Dp (ω⋆− ω) , (13b)
+where Dp (ω⋆− ω) is commonly referred to as (virtual) damp-
+ing [8, Sec. II-b] and is inspired by the speed droop response of
+a synchronous machine. Note that the speed dependent term in
+(13b) has no exact analogue in a synchronous machine. The
+response of SM damper windings and its turbine governor
+are on different time scales and the SM damper windings
+do not act relative to the nominal frequency. In contrast, the
+speed dependent term in (13b) provides both instantaneous
+damping and at steady-state (i.e., the equivalent to SM turbine
+governor droop) relative to the nominal frequency. Moreover,
+Jr is the virtual rotor’s inertia constant. Note that the dynamics
+(13) reduce to droop control (11) when using Jr/Dp≈ 0 as
++ dω + 1
+s + kp + ki
+sp⋆
+−
+p ω ⋆
+ω θ v⋆
+∥vdq∥
+−
+ˆvd
+Fig. 6: Droop control frequency and ac voltage control block
+diagrams based on (11) and (12).
++ 1
+Jω⋆ + 1
+s
+1
+s
++Dp
+J
++ 1
+Mf
+(
+kp + ki
+s
+)
+equation (14)
+p⋆
+−
+p
+¨θ= ˙ω θ
+−
+ω
+ω⋆
+v⋆
+∥vdq∥
+− if
+ω
+ˆvabc
+θ
+Fig. 7: Block diagram of a grid-forming VSM based (13)-(15).
+recommended in [8]. These angle dynamics capture the main
+salient features of virtual synchronous machines, but do not
+suffer from drawbacks of more complicated implementations
+(see [4] for a discussion). The three-phase voltage induced by
+the VSM is given by
+ˆvabc = 2ωMfif
+[
+sin (θ) sin
+(
+θ− 2π
+3
+)
+sin
+(
+θ− 4π
+3
+)]⊤
+, (14)
+where Mf and if are respectively the virtual mutual inductance
+magnitude and excitation current. Similar to (12), we utilize
+input if to achieve exact ac voltage regulation via PI control
+and thereby replicate the function of the A VR of a synchronous
+machine
+if = kp
+Mf
+(v⋆−∥ vdq∥) + ki
+Mf
+∫ t
+0
+(v⋆−∥ vdq(τ)∥) dτ. (15)
+Transforming ˆvabc to dq-coordinates with θ and ω as in (13),
+the voltage and current loops and modulation signal generation
+remain the same as (6)–(9).
+E. Matching Control
+Matching control is a grid-forming control strategy that
+exploits structural similarities between power converters and
+SMs [10]–[13], [40] and is based on the observation that the
+dc-link voltage - similar to the synchronous machine frequency
+- indicates power imbalances. Hence, the dc voltage, up to
+a constant factor, is used to drive the converter frequency.
+This control technique structurally matches the differential
+equations of a converter to those of a SM. Furthermore,
+analogous to the machine input torque, the dc current is used to
+control the ac power. The angle dynamics of matching control
+are represented by
+˙θ = kθvdc, (16)
+where kθ := ω⋆/v⋆
+dc. Finally, the ac voltage magnitude
+is controlled through the modulation magnitude µ by a PI
+controller
+µ = kp (v⋆−∥ vdq∥) + ki
+∫ t
+0
+(v⋆−∥ vdq(τ)∥) dτ. (17)
+The reference voltage for the voltage controller in αβ-
+coordinates is given by:
+ˆvαβ = µ[− sin θ cos θ]⊤. (18)
+Transforming ˆvαβ to dq-coordinates with θ and ω as in (16),
+the voltage and current loops and modulation signal generation
+remain the same as (6)–(9).
+kθ
+1
+s
++ kp + ki
+s
+vdc
+ω
+v⋆
+∥vdq∥ −
+equation (18)
+θ
+µ
+ˆvαβ
+Fig. 8: Matching control block diagram based on (16)-(18).
+
+=== PDF PAGE 6 ===
+6
+1
+v⋆2
+/
++ η + 1
+s
+(·)2
+p⋆
+p
+−
+ω⋆
+ω θ
+1
+v⋆2
+/
++ η + × 1
+sq⋆
+q
+− ∥˙ˆvdq∥
+∥ˆvdq∥
+∥ˆvdq∥2
+(·)2 + ηα
+v⋆2
+(·)2
+v⋆
+∥ˆvdq∥2
+−
+∥ˆvdq∥
+Fig. 9: Block diagram of dVOC in polar coordinates corre-
+sponding to (22). Note that singularity at ∥ˆvdq∥ = 0 only
+appears in the dVOC implementation in polar coordinates but
+not in the implementation in rectangular coordinates, i.e., (21).
+To further explain the matching concept, we replace vdc in
+(1a) by ω/kθ from (16) resulting in
+˙θ = ω, (19a)
+Cdc ˙ω = kθidc− kθix− Gdcω. (19b)
+Recalling the SM’s angle and frequency dynamics (4a)-(4b)
+and replacing Tf by Dfω
+˙θ = ω, (20a)
+J ˙ω = Tm− Te− Dfω, (20b)
+Comparing (19) and (20) reveals the structural matching of
+GFC dynamics to that of SM. Dividing (19b) by k2
+θ to obtain
+the same units as in (20b) and matching variables results in
+Jr = Cdc/k2
+θ, Df = Gdc/k2
+θ, Tm = idc/kθ, and Te = ix/kθ.
+In other words, using matching control the inertia constant
+of the GFC is linked to its internal energy storage, the dc-
+side losses Gdcω are linked to the machine windage friction
+losses Dfω, and the frequency droop response is provided
+through the proportional dc voltage control kdc (v⋆
+dc− vdc) =
+(kdc/kθ) (ω⋆− ω) (cf. (10)). The structural matching induced
+by (16) also extends to the converter ac ﬁlter and generator
+stator dynamics (see [11], [13] for a detailed derivation).
+F . Dispatchable Virtual Oscillator Control
+Dispatchable virtual oscillator control (dVOC) [15]–[17] is
+a decentralized grid-forming control strategy that guarantees
+almost global asymptotic stability for interconnected GFCs
+with respect to nominal voltage and power set-points [15],
+[16]. The analytic stability conditions for dVOC explicitly
+quantify the achievable performance and include the dynamics
+and transfer capacity of the transmission network [16].
+The dynamics of dVOC in αβ-coordinates are represented
+by
+˙ˆvαβ = ω⋆J2ˆvαβ + η (Kˆvαβ−R 2(κ)iαβ + φ (v⋆, ˆvαβ)), (21)
+where φ (v⋆, ˆvαβ) =
+(
+α/v⋆2)(
+v⋆2−∥ ˆv2
+αβ∥
+)
+ˆvαβ, ˆvαβ =
+[ˆvα ˆvβ]⊤ is the reference voltage, iαβ = [iα iβ]⊤ is current
+injection of the converter, the angle κ := tan −1 (lω⋆/r)
+models the network inductance to resistance ratio, and η, α
+are positive control gains. Furthermore we have
+R2(κ) :=
+[cos κ − sin κ
+sin κ cos κ
+]
+,K := 1
+v⋆2R2(κ)
+[
+p⋆ q⋆
+−q⋆ p⋆
+]
+,
+where R2(κ) is the 2-D rotation by κ. As shown in [16]
+the dynamics (21) reduce to a harmonic oscillator if phase
+synchronization is achieved (i.e.,Kˆvαβ−R 2(κ)iαβ = 0) and
+∥ˆvαβ∥ = v⋆ (i.e.,
+(
+v⋆2−∥ ˆvαβ∥2)ˆvαβ = 0). Rewriting (21)
+in polar coordinates for an inductive network (i.e., κ = π/2)
+reveals the droop characteristics (see [15]–[17]) of dVOC as
+˙θ = ω⋆ + η
+( p⋆
+v⋆2− p
+∥ˆvdq∥2
+)
+, (22a)
+∥ ˙ˆvdq∥ = η
+( q⋆
+v⋆2− q
+∥ˆvdq∥2
+)
+∥ˆvdq∥ + ηφ (v⋆,∥ˆvdq∥) , (22b)
+where φ (v⋆,∥ˆvdq∥) =
+(
+α/v⋆2)(
+v⋆2−∥ ˆvdq∥2)
+∥ˆvdq∥. In
+other words, for a high voltage network and near the nominal
+steady state (i.e., ∥ˆvdq∥ ≈ v⋆) the relationship between
+frequency and active power resemble that of standard droop
+control given in (11) with dω = η/v⋆2. Moreover, when
+choosing the control gain α to obtain post-fault voltages
+consistent with the other control algorithms described above,
+the ﬁrst term in (22b) is negligible and (22b) reduces to
+the voltage regulator ∥ ˙ˆvdq∥ ≈− 2ηα (∥ˆvdq∥− v⋆) near the
+nominal steady state.
+IV. N ETWORK CASE STUDY
+In this section we explore various performance aspects
+of the grid-forming control techniques in the presence of
+synchronous machines. In the forthcoming discussion, we use
+the test system shown in Figure 3. The parameters and control
+gains are given in Table I. The implementation in Simulink is
+available online [23].
+In order to avoid the delay associated with the frequency
+measurement and signal processing introduced by standard
+synchronous reference frame phase-locked loop (SRF-PLL)
+[22], we use the mechanical frequency of the SM at node 1
+in Figure 3 to evaluate the post-disturbance system frequency
+(e.g., in Figures 11-12). For the grid-forming converters we
+use the internal controller frequencies deﬁned by (11), (13),
+(16) and (22). We remark that, in a real-world system and
+in an EMT simulation (in contrast to a phasor simulation),
+there is no well-deﬁned frequency at the voltage nodes during
+transients, whereas the internal frequencies of the grid-forming
+converters are always well-deﬁned [1, Sec. II-J], [41]. Lastly,
+we note that in all the forthcoming case studies we assume
+that the system is in steady-state at t = 0.
+A. Performance Metrics
+We adopt the standard power system frequency performance
+metrics i.e., maximum frequency deviation ||∆ω||∞ (i.e.,
+
+=== PDF PAGE 7 ===
+7
+ω (t0)
+||∆ ω ||∞
+|˙ω |:= |ω (t0+T )− ω (t0)|
+T
+t0 t0 + T
+ω (t0 + T )
+ω (t)
+≈
+t
+Fig. 10: Post-event frequency nadir and RoCoF.
+frequency nadir/zenith) and RoCoF | ˙ω| (i.e., the slope of line
+tangent to the post-event frequency trajectory) deﬁned by
+||∆ω||∞ := max
+t≥t0
+|ω⋆− ω(t)|, (23a)
+| ˙ω| :=|ω(t0 + T )− ω(t0)|
+T , (23b)
+where t0 > 0 is the time when the disturbance is applied to the
+system, and T > 0 is the RoCoF calculation window [1], [22].
+See Figure 10 for visual representation of the metrics described
+by (23). In this work, we use T = 250ms, which is in line
+with values suggested for protection schemes (see [21, Table
+1]). Dividing the metrics (23) by the size of the magnitude of
+the disturbance results in a measure of the system disturbance
+ampliﬁcation.
+B. Test Network Conﬁguration and Tuning Criteria
+In order to study the performance of the control approaches
+introduced in Section III, we apply the same strategy (with
+identical tuning) for both converters (i.e., at nodes 2 and 3 in
+Figure 3), resulting in four different SM-GFC paired models.
+As a benchmark, we also consider an all-SMs system with
+three identical SMs (i.e., at nodes 1-3). Selecting fair tuning
+criteria for the different control strategies is a challenging
+task. For this study, we tune the control parameters such
+that all generation units exhibit identical proportional load
+sharing behavior. Appendix A presents the tuning criteria and
+derivation of some control parameters.
+C. Impact of Grid-Forming Control on Frequency Metrics
+In this section, we test the system behavior for different load
+disturbances ∆pi. The network base load pl is constant and
+uniformly distributed between nodes 5, 7 and 9 while ∆pi is
+only applied at node 7. For each disturbance input we calculate
+||∆ωi||∞ and| ˙ωi| for the SM at node 1 and normalize these
+quantities by dividing by |∆pi|. Figures 11 and 12 illustrate
+the distribution of system disturbance input/output gains asso-
+ciated with introduced frequency performance metrics. Note
+that the network base load pl is 2 pu and the elements of the
+load disturbance sequence ∆pi∈ [0.2, 0.9], i = 1 , . . . ,100
+are uniformly increasing by 0.007 pu starting from p1 = 0.2
+pu.
+All the grid-forming controls presented in Section III are
+originally designed without consideration of the converter
+dc and ac current limitation. Thus, to explore the intrinsic
+behavior of the GFCs and their inﬂuence on frequency stability
+the network loading scenarios described above are selected
+such that the GFCs dc and ac currents do not exceed the limits
+imposed by (3) and (7). However, in practice, GFCs are subject
+to strict dc and ac current limits and are combined with current
+limiting strategies in a modular fashion. The impact of the dc
+and ac current limits on the performance of GFCs is explored
+in Subsections IV-D to IV-F1.
+Figures 11 and 12 suggest that, regardless of the choice
+of control strategy, the presence of grid-forming converters
+improves the metrics compared to the all-SM system. This
+possibly observation can be explained by the fast response
+of converters compared to the slow turbine dynamics, i.e., τg
+in (5) is larger than τdc in (2). Because of this, the converters
+reach frequency synchronization at a faster time-scale and then
+synchronize with the SM (see Figure 13). Overall, for any
+given disturbance input, the converters are able to react faster
+than the SM and the remaining power imbalance affecting the
+SM is smaller than in the all-SM system. This result highlights
+that the fast response of GFCs should be exploited instead of
+designing the controls of a converter (fast physical system) to
+emulate the slow response of synchronous machines [1].
+We observe that droop control and dVOC exhibit very sim-
+ilar performance conﬁrming the droop-like behavior of dVOC
+in predominately inductive networks (see (22)). Moreover,
+the difference between droop control and VSM arises from
+the inertial (derivative control) term in (13) and the RoCoF
+is considerably higher when using matching control. This
+can be explained by the fact that VSM, droop control, and
+dVOC ignore the dc voltage and aggressively regulate the ac
+quantities to reach angle synchronization, thus requiring higher
+transient peaks in dc current to stabilize the dc voltage (see
+Section IV-D). Although improving RoCoF, this approach can
+lead to instability if the converter is working close to the rated
+power of the dc source (but far away from its ac current limit),
+as shown in the next section. On the other hand, matching
+control regulates the dc link voltage both through the dc source
+and by adjusting its ac signals.
+we selected the RoCoF calculation window according to
+the guideline [21], which accounts for noise and possible
+oscillations in the frequency signal. However, these guide-
+lines were derived for a power system fully operated based
+on SMs. Given that grid-forming converters introduce faster
+dynamics, machines are expected to reach the frequency nadir
+faster. Hence, a smaller RoCoF windows might need to be
+considered in a low-inertia power system to properly assess
+system performance (the reader is referred to [42, Sec. III-
+C] for further insights on the choice of RoCoF window
+in a low-inertia system). We note that the performance of
+the different grid-forming control strategies shown in Figure
+11 and 12 is sensitive to the tuning of control gains and
+choice of RoCoF computation window. However, due to the
+comparably slow response of conventional generation tech-
+
+=== PDF PAGE 8 ===
+8
+Fig. 11: Normalized distribution of the RoCoF| ˙ωi|/|∆pi| of the synchronous machine frequency at node 1 for load disturbances
+∆pi ranging from 0.2 p.u. to 0.9 p.u. at node 7. For each load disturbance, | ˙ωi|/|∆pi| is normalized by the maximum value
+corresponding to the all-SMs conﬁguration.
+Fig. 12: Normalized distribution of the nadir ||∆ωi||∞/|∆pi| of the synchronous machine frequency at node 1 for load
+disturbances ∆pi ranging from 0.2 p.u. to 0.9 p.u. at node 7. For each load disturbance, ||∆ωi||∞/|∆pi| is normalized by the
+maximum value corresponding to the all-SMs conﬁguration.
+nology the performance improvements for the system with
+grid-forming converters over the all-SM system persist for a
+wide range of parameters. Moreover, using comparable tuning
+(see Section IV-B) the differences between the different grid-
+forming techniques observed in this section are expected to
+remain the same.
+D. Response to a Large Load Disturbance
+In this subsection we analyze the response of the grid-
+forming converters to large disturbances when the dc source
+is working close to its maximum rated values. Speciﬁcally, we
+focus on the implications of the dc current limit (3) to highlight
+the response of GFCs when interfacing curtailed renewable
+generation with low headroom (i.e., PV / wind) or a converter
+system with an undersized dc-dc converter stage. In such sce-
+narios, the dc current limit can be activated independently of
+the ac current limit. For clarity of representation we ﬁrst focus
+exclusively on the matching control as its angle dynamic (16)
+explicitly considers the dc voltage. Droop control, which does
+not consider the dc voltage, is solely presented to emphasize
+Fig. 13: Frequency of the system with two VSMs after a 0.75
+pu load increase. The converters quickly synchronize with each
+other and then slowly synchronize with the machine.
+the need for an ac current limitation mechanism to implicitly
+stabilize the dc voltage.
+To begin with, we set the network base load pl and load
+change ∆p to 2.25 and 0.9 pu respectively (i.e., a total
+network load after the disturbance of 3.15 pu) which is equally
+shared by the SM and the GFCs. We expect a post-disturbance
+converter power injection of 1.05 pu and idc close to the dc
+current limit idc
+max =±1.2 pu. Figure 14 shows the dc voltage
+and delayed dc current before saturation for the converter at
+node 2. For sufﬁciently large disturbance magnitude, i⋆
+dc and
+consequently iτ exceed the current limit, i.e., the dc current
+idc = idc
+max is saturated.
+Figures 14 and 15 highlight that the matching control
+succeeds to stabilize the dc voltage despite the saturation of the
+dc source. The nature of matching control - which accounts
+for the dc-side dynamics while regulating the ac dynamics
+i.e., (16) - results in increased robustness with respect to
+large disturbances. From a circuit-theoretic point of view
+this is possible only if the sum of the ac power injection
+and ﬁlter losses equals the approximately constant dc power
+inﬂow vdcidc
+max. The converter can inject constant ac power
+into the network only if its angle difference with respect to the
+remaining devices in the network is constant. In the presence
+of the slow SM angle and frequency dynamics this implies that
+the GFCs need to synchronize their frequencies to the SM so
+that the relative angle θGFC− θSM = θmax is constant (see
+the frequency of GFC 1 following the dc source saturation at
+t = 0.5s in Figure 15). Note that the behavior for the matching
+controlled GFCs is similar to that of the SM (see Section
+III-E and [10], [11], [13]), i.e., it achieves synchronization
+both under controlled or constant mechanical input power
+
+=== PDF PAGE 9 ===
+9
+Fig. 14: dc current demand of the converter at node 2 (top)
+and its dc voltage (bottom) after a 0.9 pu load disturbance.
+Fig. 15: dc current demand and saturated dc current (top),
+frequency of the converter (using matching control) at node 2
+and SM after a 0.9 pu load disturbance (bottom).
+(i.e., dc current injection). Figure 14 shows that for the GFCs
+controlled by droop control the dc-link capacitors discharge to
+provide iτ− idc
+max (i.e., the portion of current demand which
+is not provided due to the saturation (3)). Because the angle
+and frequency dynamics (i.e., (11), (13), and (22a)) of droop
+control, VSM, and dVOC purely rely on ac measurements
+they are agnostic to the dc dynamics and source saturation.
+Consequently, a prolonged duration of dc source saturation
+results in a collapse of the dc voltage. A potential remedy is
+to incorporate an ac current limitation scheme to prevent the
+GFC from depleting the dc-link capacitor. This observation
+motivates the discussion in the next subsection with restricted
+focus on droop control, VSM, and dVOC techniques.
+E. Incorporating the AC Current Limitation
+In this subsection, we investigate if the ac current limitation
+(7) presented in section III-A can mitigate the instabilities of
+the GFCs controlled by droop control, VSM and dVOC under
+dc source saturation. To this end, we consider the same base
+load and disturbance as in previous test case, i.e., pl = 2.25
+and ∆p = 0 .9 pu. For this scenario, the GFCs dc transient
+current demand iτ and the switching node current magnitude
+∥is,dq∥ exceeds the limits (i.e., idc
+max = iac
+max = 1.2 pu) imposed
+by (3) and (7).
+Fig. 16: dc voltage of the converter at node 2 after a 0.9 pu
+load disturbance when both dc and ac limitation schemes (3)
+and (7) are active and τg = 5s.
+Fig. 17: dc voltage (top) and dc current demand (bottom) of
+the converter at node 2 after a 0.9 pu load disturbance when
+all the limitation schemes i.e., (3), (7) and (24) are active and
+τg = 5s.
+We observe that using the ac current limiter does not
+stabilize the dc voltage of the GFCs controlled by droop
+control, VSM, and dVOC. Figure 16 illustrates the behavior of
+the GFC at node 2. Speciﬁcally, the current limitation imposed
+by (7) results in integrator windup, a loss of ac voltage control
+and, ultimately, instability of the grid-forming control [34] and
+dc voltage. We remark that GFCs exhibit the same instability
+behavior when the ac current limit is smaller than that of the
+dc-side i.e., iac
+max < idc
+max.
+To mitigate this load-induced instability, we explore a
+current limitation scheme that modiﬁes the active power set-
+point when∥is,dq∥ exceeds a certain threshold value, i.e.,
+∆p⋆ :=
+{
+0 if ∥is,dq∥≤ iac
+th ,
+γp (∥is,dq∥− iac
+th) if ∥is,dq∥ > iac
+th , (24)
+and ∆p⋆ is added to p⋆ in (10), (11), (13b) and (21), γp denotes
+a proportional control gain, and iac
+th < i ac
+max is the activation
+threshold. Note that the control law (24) implicitly manipulates
+the grid-forming dynamics through their set-points such that
+the ac current magnitude stays within the admissible limits
+for large increases in load. We emphasize that this strategy
+aims at mitigating instabilities induced by large load increases
+and that the resulting GFC response to grid faults needs to be
+carefully studied.
+For a 0.9 pu load increase, the current limitation strategy
+(24) is able to stabilize the system with iac
+th = 0.9 pu and γp =
+2.3 (pb/iac
+b ) where pb and iac
+b denote the converter base power
+
+=== PDF PAGE 10 ===
+10
+Fig. 18: dc voltage (top) and dc current demand (bottom) of
+the converter at node 2 after a 0.9 pu load disturbance when
+both dc and ac limitation schemes (3) and (7) are active and
+τg = 1s.
+and current, respectively. Figure 17 depicts the response of the
+same GFC as in Figure 16. Note that (24) effectively stabilizes
+the dc voltage for droop control, VSM, and dVOC. Moreover,
+in contrast to Figure 14, after the post-disturbance transient
+the dc source is no longer in saturation. Broadly speaking,
+this strategy succeeds to stabilize the system by steering the
+GFC power injection away from the critical limits. However,
+this also inﬂuences the post-disturbance operating point of the
+GFCs due to the threshold value being below the rated value.
+Finally, we observe that the different time-scales in a low-
+inertia system contribute to the instabilities observed in the
+previous section. In particular, if the SM’s turbine responds
+faster, GFCs with the standard limitation strategy (7) preserve
+stability - without the need to implement (24) - despite the fact
+that transient dc and ac currents exceed the limits. Figure 18
+shows the GFCs responses when the SM turbine delay τg is
+1s (cf. Figure 16 where τg = 5s). It can be seen that the slow
+SM turbine dynamics again contribute to the system instability
+when dc and ac currents are saturated. We conclude that the
+presence of different time-scales in a low-inertia system - often
+neglected in the literature [26], [33]–[39] - must be considered
+in designing a robust ac current limitation mechanism for the
+GFCs.
+Remark 2. (dc and ac measurements)
+We observe that using ac measurements to drive the angle
+dynamics - e.g., VSMs use active power measurements in (13)
+- improves the frequency performance of GFCs (see Figures
+11 and 12). On the other hand, using dc voltage measurements
+- e.g., matching control (16) - results in robustness with
+respect to dc current limits. Further research is required to
+combine these complementary beneﬁts by using both dc and
+ac measurements in grid-forming control.
+F . Interaction of GFC and SM Dynamics
+The forthcoming discussion highlights that the interplay
+between the fast GFC and slow SM dynamics inﬂuences the
+system stability. The following case studies are tightly related
+to the scenarios in previous subsections.
+Fig. 19: dc current demand (top) and dc voltage (bottom) of
+the converter at node 2 after loss of the SM at node 1.
+1) Loss of synchronous machine: we study the response
+of GFCs when disconnecting the SM at node 1, that is, the
+system turns into an all-GFCs network. The implications of
+such a contingency are threefold. First, the power injected
+by the machine, which partially supplies the base load, is no
+longer available. Second, the stabilizing dynamics associated
+with the machine’s governor, A VR, and PSS are removed from
+the system. Third, the slow dynamics of the SM no longer
+interact with the fast dynamics of the GFCs.
+For this test, we set the base load to 2.1 pu, and the SM and
+GFCs set-points are set to 0.6 and 0.75 pu respectively. Note
+that when the SM at node 1 is disconnected, the converters
+increase their power output according to the power sharing be-
+havior inherent to all four grid-forming controls (see Appendix
+A). The resulting increase in the converter power injection to
+roughly 1.05 pu is similar to the load disturbance scenario used
+to illustrate the instability behavior of droop control in Figure
+14. Figure 19 shows iτ and vdc for the converter at node 2.
+Although the disturbance magnitude affecting the converters
+is similar to the one in studied in Subsection IV-D, all GFCs
+remain stable after the loss of the SM without the need to
+incorporate (24). In particular, due to the absence of the slow
+turbine dynamics and fast synchronization of the converters
+iτ exceeds the limit idc
+max for around 50ms while it remains
+above the limit for a prolonged period of time in Figure 14.
+This highlights the problematic interaction between the fast
+response of the GFCs and the slow response of the SM. While
+the synchronous machine perfectly meets classic power system
+control objectives on slower time scales, the dominant feature
+of GFCs is their fast response. However, the fast response
+of GFCs can also result in unforeseen interactions with other
+parts of the system such as the slow SM response (shown
+here), line dynamics (see [16], [29]), and line limits [43].
+2) Low-inertia vs. no-inertia systems: considering the same
+load disturbance scenario as in Subsection IV-D, we observe
+the same instability of droop control when the test system
+contains one GFC and two SMs, i.e., the instability cannot be
+prevented by adding more inertia to the system.
+Figure 20 shows the dc current demand iτ (i.e., before
+saturation) and dc voltage in an all-GFCs (i.e., no-inertia)
+
+=== PDF PAGE 11 ===
+11
+Fig. 20: dc current demand (top) and dc voltage (bottom) after
+a 0.9 pu load disturbance in an all-GFC system.
+system for a load increase of ∆p = 0 .9 pu. In this case,
+the GFCs quickly synchronize to the post-event steady state,
+which does not exceed the maximum dc current, saturate the
+dc source for only approximately 200ms, and remain stable.
+In contrast, in the system with two GFCs and one SM, the
+SM does not reach its increased post-event steady-state power
+injection for several seconds. During this time the response
+of droop control results in a power injection that exceeds
+the limits of the dc source and collapses the dc voltage.
+In other words, the slow response of the SM due to the
+large turbine time constant prolongs the duration of dc source
+saturation for the GFCs which results in depleting the dc-link
+if the converter ac current is not limited. We conclude this
+subsection by remarking that in the mixed SM-GFCs system
+in the Subsections IV-D and IV-E, it is vital to account for
+dc side limits (either through ac current limits or dc voltage
+measurements) to stabilize the GFCs in presence of SMs.
+However, in an all-GFC system - either by default or due
+to the loss of SM - the dc side is only limited brieﬂy and
+the system remains stable. This observation highlights that the
+interaction of the fast GFC dynamics and slow SM dynamics
+can potentially contribute to system instability.
+V. Q UALITATIVE ANALYSIS
+In this section, we provide a qualitative but insightful
+analysis that explains the results observed in Section IV-C and
+Section IV-D. To this end, we develop simpliﬁed models that
+capture the small-signal frequency dynamics of synchronous
+machines and grid-forming converters. Applying arguments
+from singular perturbation theory [12], [44] results in a model
+that highlights the main salient features of the interaction of
+synchronous machines and grid-forming converters.
+A. Frequency dynamics incorporating GFCs
+To obtain a simpliﬁed model of the frequency dynamics
+of the GFCs, we assume that the cascaded ac voltage and
+ac current control (see (6) and (8)) achieve perfect tracking
+(i.e., v dq = ˆv dq). Assuming that the system operates near the
+nominal steady-state (i.e., ∥v dq∥≈ v⋆, ω≈ ω⋆) and p⋆ = 0,
+q⋆ = 0 , we rewrite the remaining dynamics in terms of the
+voltage angle and power injection at every bus. This results
+in a simpliﬁed model of the angle θ and the frequency ω
+of a GFC or SM relative to a frame rotating at the nominal
+frequency ω⋆.
+1) Droop control and dVOC: For a converter controlled by
+droop control or dVOC, we obtain
+˙θ =−dωp, (25)
+where p is the power ﬂowing out of the converter and dω is
+the droop control gain and given by dω = η/v⋆2 for dVOC.
+2) Synchronous machine, VSM, and matching control: For
+a synchronous machine, a VSM, and a converter controlled by
+matching control we obtain
+˙θ = ω, (26a)
+2H ˙ω =−Dω + sat (pτ , pmax)− p, (26b)
+τ ˙pτ =−pτ− dpω. (26c)
+For a SM the parameters directly correspond to the parameters
+of the machine model presented in Section II-B, i.e., H, dp,
+and τ = τg, are the machine inertia constant, governor gain,
+and turbine response time, and the model does not capture SM
+losses (i.e., D = 0) or damper winding torques. Throughout
+this work we have not considered a limit on the turbine power
+output (i.e., pmax =∞) because a synchronous machine, in
+contrast to a GFC, typically has sufﬁcient reserves to respond
+to the load changes and faults considered in this work. For
+the VSM presented in Section III-D, we obtain τ = 0, pτ =
+0, H = 1 /2J ω⋆, and D = Dpω⋆, i.e., the VSM does not
+emulate a turbine and implements no saturation of the damping
+term in its frequency dynamics (13b). Finally, for matching
+control we obtain τ = τdc, pmax = v⋆
+dcidc
+max, H = 1/2Cdc/k2
+θ,
+dp = kdc/kθ (see Section III-E) and D = 0, i.e., by linking
+frequency and dc voltage, matching control clariﬁes that the
+dc source plays the role of the turbine in a machine and the
+proportional dc voltage control plays the role of a governor.
+B. Reduced-order model
+For brevity of the presentation we will now restrict our
+attention to the case of one SM and one GFC. The equivalent
+inertia constants and turbine time constants for the different
+grid-forming converter control strategies are either zero or
+negligible compared to typical inertia constants and turbine
+time constants for machines (see Table I). We therefore,
+assume that the states of the synchronous machine are slow
+variables, while the states of the GFC are fast and apply ideas
+from singular perturbation theory [12], [44].
+Using the dc power ﬂow approximation and pd,GFC and
+pd,SM to denote a disturbance input, we obtain pGFC =
+b (θGFC− θSM) + pd,GFC and pSM = b (θSM− θGFC) + pd,SM,
+where b is the line susceptance. Neglecting the frequency
+dynamics and dc source dynamics, i.e., letting τ → 0 and
+H→ 0, the dynamics of the relative angle δ = θSM− θGFC
+are given by ˙δ = ωSM− (DGFC + dp,GFC) (bδ− pd,GFC) if
+|dp,GFC| <|pmax|, ˙δ = ωSM− DGFC (bδ− pd,GFC± pmax) if
+the dc source is saturated, and DGFC denotes the damping
+provided by the GFC. For typical droop gains and network
+
+=== PDF PAGE 12 ===
+12
+parameters, the relative angle dynamics are fast compared to
+the machine dynamics. Letting ˙δ→0, we obtain the reduced-
+order model
+2H ˙ωSM =−sat (DGFCωSM, pmax)+ pτ,SM+pd, (27a)
+τ ˙pτ,SM =−pτ,SM− dpωSM. (27b)
+where pd = pd,GFC + pd,SM, H, dp, and τ are the inertia
+constant, governor gain, and turbine time constant of the
+synchronous machine, DGFC is the damping provided by the
+GFC, i.e., DGFC = 1/dω (droop, dVOC, VSM) or DGFC = dp
+(matching). Moreover, droop control, dVOC, and the VSM
+implement no saturation of their power injection in their
+respective angle / frequency dynamics (i.e., (11b), (22a), and
+(13b)) resulting in pmax =∞. In contrast, for matching control
+the saturation of the dc source results in pmax = v⋆
+dcidc
+max.
+We note that for the case of under damped dynamics (27)
+and without saturation, a closed-form expression for the the
+step response and frequency nadir (27) can be found in [19,
+Sec. V-A]. However, even for the seemingly simple model
+(27) the dependence of the nadir on the parameters is very
+involved and does not provide much insight. By neglecting
+the damping term in (27a) and the feedback term −pτ,SM
+in (27b) an insightful expression for the nadir is obtained
+in [45]. However, the key feature of the GFCs is that they
+contribute damping, which is not captured by analysis in [45].
+Nonetheless, the model (27) provides several insights that we
+discuss in the next section.
+C. Impact of Grid-Forming Control on Frequency Stability
+A system with three synchronous machines as in Section IV
+can be modeled by (27) with H = 3HSM, dp = 3dp,SM, τ =
+τSM and DGFC = 0. This corresponds to the well known center
+of inertia frequency model with ﬁrst-order turbine dynamics
+(see [3], [19]). In contrast, if two SMs are replaced by GFCs
+with equal droop setting we obtain H = HSM, dp = dp,SM,
+τ = τSM and DGFC = 2dp,SM.
+This highlights that, on the time-scales of the SM, the GFCs
+provide fast acting frequency control. After an increase in load
+the machine inertia serves as buffer until the relatively slow
+turbine provides additional power to the machine. In contrast,
+the converters respond nearly instantaneously to any imbalance
+and therefore the need for inertia is decreased. Intuitively, this
+increase in fast primary frequency control should results in
+lower nadir values. Similarly, the additional damping provided
+by the converter in (27) can be interpreted as a ﬁlter acting on
+the power imbalance, i.e., the GFCs are providing DGFCωSM
+or pmax and the power imbalance affecting the machine is
+reduced, therefore resulting in smaller average RoCoF.
+To validate the model (27) and our interpretation, we
+compute the frequency nadir and averaged RoCoF (see (23))
+for the machine parameters and disturbance used in in Section
+IV, and H = ν3HSM, dp = ν3dp,SM, τ = τSM and
+DGFC = (1 − ν)dp,SM and D = 0 , where ν ∈ [1/3, 1] is
+a scalar parameter that interpolates the parameters between
+the two cases (all SM, one SM and two GFCs). The average
+RoCoF and frequency nadir according to (27) are shown in
+Figure 21. The case with pmax = 1.2 corresponds to matching
+control, the one with pmax =∞ to droop control, dVOC, and
+VSMs. It can be seen that the GFCs result in an improvement
+compared to the all SM scenario, that the implicit saturation
+of the power injection by matching control results in a smaller
+improvement compared to droop control, dVOC and VSMs,
+and that the reduction in the average RoCoF and frequency
+nadir is line with the corresponding results in Figure 11 and
+Figure 12.
+D. Instability in the presence of large load disturbance
+The instabilities of droop control, dVOC, and the VSM
+observed in Section IV-D can qualitatively be investigated
+using a simpliﬁed model of the dc-side. To compute the
+power vdcix ﬂowing out of the dc-link capacitor, we assume
+that the controlled converter output ﬁlter dynamics are fast
+and can be neglected (i.e., ˙is,αβ = 0 , ˙vαβ = 0 ) and that
+the ac output ﬁlter losses are negligible. This results in
+vdcix = v⊤
+s,αβis,αβ = v⊤
+αβiαβ = p. Moreover, we neglect
+the dc source dynamics to obtain the simpliﬁed dc voltage
+dynamics
+Cdc ˙vdc =−Gdcvdc + sat
+(
+kdc (v⋆
+dc− vdc) , idc
+max
+)
+− p
+vdc
+, (28)
+i.e., the active power p ﬂowing into the grid is drawn from the
+dc-link capacitor that is stabilized by a proportional control
+(see (10)) if the dc current iτ is not saturated. For a large
+enough constant perturbation p > 0 the dc current in (28)
+becomes saturated and controllability of the voltage vdc is lost
+and the dc voltage becomes unstable.
+In other words, if the dc source is saturated the power p has
+to be controlled to stabilize the dc voltage. Matching control
+achieves this through the angle dynamics ˙θ = kθvdc which
+converge to a constant angle difference (i.e., ωSM = ωGFC) and
+power injection when the dc source is saturated and the SM has
+enough reserves to maintain ωSM≈ ω⋆ with the GFC provid-
+ing its maximum output power. Moreover, for matching control
+it can be veriﬁed that (ωGFC− ω⋆) /ω⋆ = ( vdc− v⋆
+dc) /v⋆
+dc.
+40 60 80 100
+50
+100
+150
+RoCoF [%]
+Frequnecy nadir [%]
+3 SMs
+1 SM & 2 GFCs (pmax=∞)
+1 SM & 2 GFCs (pmax= 1.2 pu)
+Fig. 21: Change in averaged RoCoF and frequency nadir when
+transitioning from a system with 3 SMs to a system with one
+SM and two GFCs.
+
+=== PDF PAGE 13 ===
+13
+Therefore, the dc voltage deviation is proportional to the fre-
+quency deviation and the GFC with matching control remains
+stable for the scenario shown in Section IV-D.
+VI. S UMMARY AND FURTHER WORK
+In this paper we provided an extensive review of different
+grid-forming control techniques. Subsequently, we used the
+IEEE 9-bus test system incorporating high-ﬁdelity GFC and
+SM models to investigate the performance of different control
+techniques and their interaction with SM. Our case studies
+revealed that 1) the presence of the GFCs improves the
+frequency stability metrics compared to the baseline all-SMs
+system, 2) under a sufﬁciently large load disturbance, it is
+vital to implement an ac current limiting scheme to stabilize
+the grid-forming techniques which only rely on the ac mea-
+surements, 3) matching control exhibits robustness to the dc
+source saturation since its angle dynamics takes into account
+the dc quantities, 4) we explored the stabilizing inﬂuence of
+the ac current limitation, and 5) we investigated the behavior
+of GFCs in response to the loss of SM and in all-GFCs system
+highlighting a potentially destabilizing interaction between the
+GFCs and SMs dynamics. Moreover, we provided a qualitative
+analysis of GFCs impact on the frequency stability. Topics for
+the future works include 1) further exploration of the impacts
+of dc and ac current limitations on the GFCs behavior and
+providing a formal stability analysis, 2) proposing a complete
+ac current limitation strategy which is robust to load-induced
+over-current as well as grid faults, 3) the seamless transition
+between grid-forming and grid-following operation, and 4)
+blending of the different control strategies into a controller
+that achieves their complementary beneﬁts.
+APPENDIX A
+TUNING CRITERIA
+The load-sharing capability of the control techniques pre-
+sented in Section III is investigated in [4], [7], [15]. Consider-
+ing a heterogeneous network consisting of several GFCs (with
+different control) and SMs, we tune the control parameters
+such that all the units exhibit identical proportional load-
+sharing in steady-state. For the SM and droop controlled GFC,
+(5a) and (11b) can be rearranged to
+ω⋆− ω = 1
+dp
+(p− p⋆) , (29a)
+ω⋆− ω = dω (p− p⋆) . (29b)
+For VSM, assuming steady-state frequency and setting ¨θ =
+˙ω = 0 in (13b) results in
+ω⋆− ω = 1
+Dpω⋆ (p− p⋆) . (30)
+For matching control, we assume that in steady-state idc≈ i⋆
+dc
+and vdc/v⋆
+dc≈ 1. Setting ˙ω = 0 in (19b) and replacing idc by
+the expression from (10) yields
+ω⋆− ω = kθ
+kdcvdc
+(p− p⋆) . (31)
+Lastly for dVOC, assuming ∥ˆv dq∥≈ v⋆ in steady-state, the
+angle dynamics (22a) becomes
+ω⋆− ω = η
+v⋆2 (p− p⋆) . (32)
+Hence, for any given droop gain dp, if dω, Dp, kdc and η are
+selected such that the slopes of (29)-(32) are equal, all the
+GFC control techniques and SM perform equal-load sharing.
+Moreover, by selecting kdc based on this criteria, the dc voltage
+control gain in (10) is automatically set which is identical for
+all GFC implementation [23].
+Regarding the ac voltage regulation, the control gains in
+(12), (15), (17), and (22b) are selected to regulate the ac
+voltage at approximately equal time-scales. We refer to [46]
+for details on tuning the cascaded inner loops presented in
+Subsection III-A. It is noteworthy, that the time-scale of the
+reference model (i.e., grid-forming dynamics) must be slower
+than ac voltage control shown in Figure 4 to ensure optimal
+performance. Similarly, the ac current control must be faster
+than the outer voltage controller. Lastly, the choice of virtual
+inertia constant in (13b) can largely inﬂuence VSM’s dynamic
+behavior. We adopted the recommendation J/Dp = 0 .02
+proposed in [8]. The parameters used in the implementation
+[23] are reported in Table I.
+TABLE I: Case study model and control parameters [23].
+IEEE 9-bus test system base values
+Sb 100MV A vb 230kV ωb 2π50rad/s
+MV/HV transformer
+Sr 210MV A v1 13.8kV v2 230kV
+R1=R2 0.0027pu L1=L2 0.08pu Rm=Lm 500pu
+single LV/MV transformer module in Figure 2
+Sr 1.6MV A v1 1kV v2 13.8kV
+R1=R2 0.0073pu L1=L2 0.018pu Rm,Lm 347,156pu
+synchronous machine (SM)
+Sr 100MV A vr 13.8kV Df 0
+H 3.7s dp 1% τg 5s
+single converter module in Figure 2
+Sr 500kV A Gdc,Cdc 0.83,0.008 Ω−1,F v⋆dc,v⋆ll-rms 2.44,1kV
+R 0.001 Ω L 200µH C 300µF
+n 100 τdc 50ms idcmax 1.2pu
+ac current, ac voltage, and dc voltage control
+kv,p,kv,i 0.52,232.2 ki,p,ki,i 0.73,0.0059 kdc 1.6×103
+droop control
+dω 2π0.05rad/s ω⋆ 2π50 kp,ki 0.001,0.5
+virtual synchronous machine (VSM)
+Dp 105 J 2×103 kp,ki 0.001,0.0021
+matching control
+kθ 0.12 kdc 1.6×103 kp,ki 0.001,0.5
+dispatchable virtual oscillator control (dVOC)
+η 0.021 α 6.66×104 κ π/2
+REFERENCES
+[1] F. Milano, F. Dörﬂer, G. Hug, D. J. Hill, and G. Verbi ˇc, “Foundations
+and challenges of low-inertia systems,” in Power Systems Computation
+Conference (PSCC), 2018.
+[2] P. W. Sauer and M. A. Pai, Power system dynamics and stability .
+Prentice hall, 1998.
+[3] P. Kundur, Power system stability and control . McGraw-Hill, 1994.
+[4] A. Tayyebi, F. Dörﬂer, F. Kupzog, Z. Miletic, and W. Hribernik, “Grid-
+forming converters – inevitability, control strategies and challenges in
+future grid applications,” in CIRED Workshop, 2018.
+[5] “High penetration of power electronic interfaced power sources
+(hpopeips) ENTSO-E guidance document for national implementation
+for network codes on grid connection,” ENTSO-E, Tech. Rep., 2017.
+
+=== PDF PAGE 14 ===
+14
+[6] M. Chandorkar, D. Divan, and R. Adapa, “Control of parallel connected
+inverters in standalone AC supply systems,” IEEE Trans. Ind. Appl. ,
+vol. 29, no. 1, pp. 136–143, 1993.
+[7] S. D’Arco, J. A. Suul, and O. B. Fosso, “A virtual synchronous machine
+implementation for distributed control of power converters in smart
+grids,” Electric Power Systems Research , vol. 122, pp. 180–197, 2015.
+[8] Q. C. Zhong and G. Weiss, “Synchronverters: Inverters that mimic
+synchronous generators,” IEEE Trans. Ind. Electron. , vol. 58, no. 4,
+pp. 1259–1267, 2011.
+[9] Q. Zhong, P. Nguyen, Z. Ma, and W. Sheng, “Self-synchronized syn-
+chronverters: Inverters without a dedicated synchronization unit,” IEEE
+Trans. Power Electron., vol. 29, no. 2, pp. 617–630, 2014.
+[10] I. Cvetkovic, D. Boroyevich, R. Burgos, C. Li, and P. Mattavelli, “Mod-
+eling and control of grid-connected voltage-source converters emulating
+isotropic and anisotropic synchronous machines,” in IEEE Workshop on
+Control and Modeling for Power Electronics (COMPEL) , 2015.
+[11] C. Arghir, T. Jouini, and F. Dörﬂer, “Grid-forming control for power
+converters based on matching of synchronous machines,” Automatica,
+vol. 95, pp. 273–282, 2018.
+[12] S. Curi, D. Groß, and F. Dörﬂer, “Control of low-inertia power grids:
+A model reduction approach,” in IEEE Conference on Decision and
+Control (CDC), 2017, pp. 5708–5713.
+[13] C. Arghir and F. Dörﬂer, “The electronic realization of synchronous ma-
+chines: model matching, angle tracking and energy shaping techniques,”
+IEEE Trans. Power Electron. , 2019.
+[14] M. Sinha, F. Dörﬂer, B. B. Johnson, and S. V . Dhople, “Uncovering
+droop control laws embedded within the nonlinear dynamics of van der
+pol oscillators,” IEEE Trans. Control Netw. Syst., vol. 4, no. 2, pp. 347–
+358, 2017.
+[15] M. Colombino, D. Gross, J. Brouillon, and F. Dörﬂer, “Global phase and
+magnitude synchronization of coupled oscillators with application to the
+control of grid-forming power inverters,” IEEE Trans. Autom. Control ,
+2019.
+[16] D. Groß, M. Colombino, J.-S. Brouillon, and F. Dörﬂer, “The effect of
+transmission-line dynamics on grid-forming dispatchable virtual oscil-
+lator control,” IEEE Trans. Control Netw. Syst. , 2019, to appear.
+[17] G. Seo, I. Subotic, B. Johnson, M. Colombino, D. Groß, and F. Dör-
+ﬂer, “Dispatchable virtual oscillator control for decentralized inverter-
+dominant power systems - analysis of droop characteristic and veriﬁca-
+tion,” in Applied Power Electronics Conference (APEC) , 2018.
+[18] N. Pogaku, M. Prodanovic, and T. C. Green, “Modeling, analysis and
+testing of autonomous operation of an inverter-based microgrid,” IEEE
+Trans. Power Electron., vol. 22, no. 2, pp. 613–625, 2007.
+[19] F. Paganini and E. Mallada, “Global analysis of synchronization per-
+formance for power systems: bridging the theory-practice gap,” IEEE
+Trans. Autom. Control, 2019.
+[20] M. Pirani, J. W. Simpson-Porco, and B. Fidan, “System-theoretic per-
+formance metrics for low-inertia stability of power networks,” in IEEE
+Conference on Decision and Control (CDC) , 2017, pp. 5106–5111.
+[21] RG-CE System Protection & Dynamics Sub Group, “Frequency mea-
+surement requirements and usage,” ENTSO-E, Tech. Rep., 2018.
+[22] B. K. Poolla, D. Groß, and F. Dörﬂer, “Placement and implementation
+of grid-forming and grid-following virtual inertia and fast frequency
+response,” IEEE Trans. Power Syst., vol. 34, no. 4, pp. 3035–3046, 2019.
+[23] A.Tayyebi, D. Groß, and A. Anta, “GridFormingConverters: Implemen-
+tation of grid-forming control techniques in IEEE 9-bus system,” Git
+repository, 2019, https://github.com/ATayebi/GridFormingConverters.
+[24] U. Markovic, O. Stanojev, E. Vrettos, P. Aristidou, and G. Hug,
+“Understanding stability of low-inertia systems,” engrXiv preprint, 2019,
+Available at http://engrxiv.org/jwzrq.
+[25] A. Yazdani and R. Iravani, Voltage-sourced converters in power systems.
+Wiley Online Library, 2010.
+[26] G. Denis, T. Prevost, M. Debry, F. Xavier, X. Guillaud, and A. Menze,
+“The Migrate project: the challenges of operating a transmission grid
+with only inverter-based generation. A grid-forming control improve-
+ment with transient current-limiting control,” IET Renewable Power
+Generation, vol. 12, no. 5, pp. 523–529, 2018.
+[27] IEEE recommended practice for excitation system models for power
+system stability studies , IEEE Std. 421.5, 2016.
+[28] R. D. Zimmerman, C. E. Murillo-Sanchez, and R. J. Thomas, “MAT-
+POWER: Steady-state operations, planning, and analysis tools for power
+systems research and education,” IEEE Trans. Power Syst. , pp. 12–19,
+2011.
+[29] P. V orobev, P. Huang, M. A. Hosani, J. L. Kirtley, and K. Turitsyn,
+“High-ﬁdelity model order reduction for microgrids stability assess-
+ment,” IEEE Trans. Power Syst. , vol. 33, no. 1, pp. 874–887, 2018.
+[30] V . Purba, S. V . Dhople, S. Jafarpour, F. Bullo, and B. B. Johnson,
+“Reduced-order structure-preserving model for parallel-connected three-
+phase grid-tied inverters,” in IEEE Workshop on Control and Modeling
+for Power Electronics (COMPEL) , 2017.
+[31] M. M. S. Khan, Y . Lin, B. Johnson, V . Purba, M. Sinha, and S. Dhople,
+“A reduced-order aggregated model for parallel inverter systems with
+virtual oscillator control,” in IEEE Workshop on Control and Modeling
+for Power Electronics (COMPEL) , 2018.
+[32] V . Purba, B. B. Johnson, M. Rodriguez, S. Jafarpour, F. Bullo, and
+S. V . Dhople, “Reduced-order aggregate model for parallel-connected
+single-phase inverters,” IEEE Trans. Energy Convers. , vol. 34, no. 2,
+pp. 824–837, 2019.
+[33] M. G. Taul, X. Wang, P. Davari, and F. Blaabjerg, “Current limiting
+control with enhanced dynamics of grid-forming converters during fault
+conditions,” IEEE Trans. Emerg. Sel. Topics Power Electron. , 2019.
+[34] H. Xin, L. Huang, L. Zhang, Z. Wang, and J. Hu, “Synchronous
+instability mechanism of P-f droop-controlled voltage source converter
+caused by current saturation,” IEEE Trans. Power Syst. , vol. 31, no. 6,
+pp. 5206–5207, 2016.
+[35] X. Wang, Y . W. Li, F. Blaabjerg, and P. C. Loh, “Virtual-impedance-
+based control for voltage-source and current-source converters,” IEEE
+Trans. Power Electron., vol. 30, no. 12, pp. 7019–7037, 2015.
+[36] Q. Zhong and G. C. Konstantopoulos, “Current-limiting droop control
+of grid-connected inverters,” IEEE Trans. Ind. Electron. , vol. 64, no. 7,
+pp. 5963–5973, 2017.
+[37] A. Gkountaras, S. Dieckerhoff, and T. Sezi, “Evaluation of current limit-
+ing methods for grid forming inverters in medium voltage microgrids,”
+in 2015 IEEE Energy Conversion Congress and Exposition (ECCE) ,
+2015, pp. 1223–1230.
+[38] I. Sadeghkhani, M. E. Hamedani Golshan, J. M. Guerrero, and
+A. Mehrizi-Sani, “A current limiting strategy to improve fault ride-
+through of inverter interfaced autonomous microgrids,” IEEE Trans.
+Smart Grid, vol. 8, no. 5, pp. 2138–2148, 2017.
+[39] A. D. Paquette and D. M. Divan, “Virtual impedance current limiting
+for inverters microgrids with synchronous generators,” IEEE Trans. Ind.
+Appl., vol. 51, no. 2, pp. 1630–1638, 2015.
+[40] L. Huang, H. Xin, Z. Wang, K. Wu, H. Wang, J. Hu, and C. Lu,
+“A virtual synchronous control for voltage-source converters utilizing
+dynamics of DC-link capacitor to realize self-synchronization,” IEEE
+Trans. Emerg. Sel. Topics Power Electron., vol. 5, no. 4, pp. 1565–1577,
+2017.
+[41] F. Milano and A. Ortega, “Frequency divider,” IEEE Trans. Power Syst.,
+vol. 32, no. 2, pp. 1493–1501, 2017.
+[42] A. Crivellaro, A. Tayyebi, C. Gavriluta, D. Groß, A. Anta, F. Kupzog,
+and F. Dörﬂer, “Beyond low-inertia systems: Massive integration of grid-
+forming power converters in transmission grids,” Submitted. Available
+at https://arxiv.org/abs/1911.02870.
+[43] “Final report - Queensland and south Australia system separation on 25
+August 2018,” AEMO, Tech. Rep., 2019.
+[44] G. Peponides, P. Kokotovic, and J. Chow, “Singular perturbations and
+time scales in nonlinear models of power systems,” IEEE Trans. Circuits
+Syst., vol. 29, no. 11, pp. 758–767, 1982.
+[45] L. Sigrist, I. Egido, and L. Rouco, “Principles of a centralized UFLS
+scheme for small isolated power systems,” IEEE Trans. Power Syst. ,
+vol. 28, no. 2, pp. 1779–1786, 2013.
+[46] T. Qoria, F. Gruson, F. Colas, X. Guillaud, M. Debry, and T. Prevost,
+“Tuning of cascaded controllers for robust grid-forming voltage source
+converter,” in Power Systems Computation Conference (PSCC) , 2018.
+
+=== PDF PAGE 15 ===
+15
+Ali Tayyebi received his BSc degree in electrical
+engineering from the University of Tehran, Iran
+in 2012. In 2014 he received his MSc degree in
+engineering mathematics (joint MATHMODS pro-
+gram) from University of L’Aquila, and University
+of Hamburg in Italy and Germany respectively. In
+2016, he received his second MSc degree in sustain-
+able transportation and electric power systems (joint
+STEPS program) from La Sapienza, University of
+Nottingham and University of Oviedo respectively
+in Italy, UK and Spain. From 2014 to 2016, he was
+the recipient of EU scholarship for master studies. in 2016, he joined Austrian
+Institute of Technology (AIT) in Vienna, Austria as a MSc thesis candidate
+and afterward joined AIT as research assistant. In 2017, he started his joint
+PhD project at AIT and Automatic Control Laboratory, Swiss Federal Institute
+of Technology (ETH) Zürich, Switzerland. His main research interest is the
+non-linear systems and control theory with applications to power system. In
+particular, his PhD research focuses on the design of grid-forming converter
+control for low-inertia power system.
+Dominic Groß (S’11 - M’15) is an Assistant Pro-
+fessor with the Department of Electrical and Com-
+puter Engineering Department at the University of
+Wisconsin-Madison, Madison, WI, USA. From 2016
+to 2019 he was a postdoctoral researcher at the Au-
+tomatic Control Laboratory of ETH Zürich, Switzer-
+land and he was with V olkswagen Group’s Research
+Division in Wolfsburg, Germany from 2014 to 2015.
+He received a Diploma degree in Mechatronics from
+the University of Kassel, Germany, in 2010, and
+a Ph.D. degree in Electrical Engineering from the
+same university in 2014. His research interests include distributed control
+and optimization of complex networked systems with applications in power
+systems dominated by power electronic devices.
+Adolfo Anta received the Licenciatura degree from
+ICAI Engineering School, Madrid, Spain, in 2002,
+and the M.Sc. and Ph.D. degrees from the University
+of California, Los Angeles, CA, USA, in 2007 and
+2010, respectively. From 2002 to 2005, he was
+a Design Engineer with EADS-Astrium and, from
+2010 to 2012, he was a Postdoctoral Researcher
+with the Technical University of Berlin and the Max
+Planck Institute, Germany. From 2012 to 2018 he
+worked as lead researcher at GE Global Research
+Europe, Germany. He is currently with Austrian
+Institute of Technology AIT as research engineer in Vienna, Austria. His
+research interests cover a wide range of control applications, in particular
+stability issues in power systems. Dr. Anta received the Fulbright Scholarship
+in 2005, the Alexander von Humboldt Fellowship in 2011, was a Finalist
+for the Student Best Paper Award at the IEEE Conference on Decision and
+Control in 2008, and received the 2010 EMSOFT Best Paper Award and the
+IEEE CSS George S. Axelby Award in 2011.
+Friederich Kupzog holds a Diploma degree in
+electrical engineering and information technology
+from RWTH Aachen, Germany. In 2006, he joined
+the Institute of Computer Technology at TU Wien,
+Austria, where he achieved his PhD Degree in 2008.
+Until 2012, he stayed at the university as a Post-Doc
+and built up the research group ”Energy & IT” at
+the Institute of Computer Technology. Since 2012,
+Dr. Kupzog is Senior Scientist at the AIT Austrian
+Institute of Technology GmbH. His research interest
+lies in veriﬁcation methods for networked Smart
+Grid systems. He is the Head of Competence Unit Electrical Energy Systems
+since August 2018.
+Florian Dörﬂer (S’09–M’13) is an Associate Pro-
+fessor at the Automatic Control Laboratory at ETH
+Zürich. He received his Ph.D. degree in Mechan-
+ical Engineering from the University of California
+at Santa Barbara in 2013, and a Diplom degree
+in Engineering Cybernetics from the University of
+Stuttgart in 2008. From 2013 to 2014 he was an
+Assistant Professor at the University of California
+Los Angeles. His students were winners or ﬁnalists
+for Best Student Paper awards at the 2013/2019
+European Control Conference, the 2016 American
+Control Conference, and the 2017 PES PowerTech Conference. His articles
+received the 2010 ACC Student Best Paper Award, the 2011 O. Hugo Schuck
+Best Paper Award, the 2012-2014 Automatica Best Paper Award, and the
+2016 IEEE Circuits and Systems Guillemin-Cauer Best Paper Award. He is
+a recipient of the 2009 Regents Special International Fellowship, the 2011
+Peter J. Frenkel Foundation Fellowship, and the 2015 UCSB ME Best PhD
+award.
