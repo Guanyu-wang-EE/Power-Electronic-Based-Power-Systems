@@ -4,7 +4,7 @@
 
 ## 仓库发布维护
 
-- 2026-09-23：按用户要求新增英文 [README](../README.md) 与完整[中文镜像](../README_zh.md)，补全 [AGENTS.md](../AGENTS.md) 的独立克隆、维护与全量归档约定。目标仓库为 `Guanyu-wang-EE/Power-Electronic-Based-Power-Systems`，已确认初始为空；准备将课程原件、文献、草稿、备份及隐藏校验文件全量提交到 `main`。本次不修改作业正文；推送结果以实际远端同步核对为准。
+- 2026-09-23：按用户要求新增英文 [README](../README.md) 与完整[中文镜像](../README_zh.md)，补全 [AGENTS.md](../AGENTS.md) 的独立克隆、维护与全量归档约定。目标仓库为 `Guanyu-wang-EE/Power-Electronic-Based-Power-Systems`，初始为空；已将全部 89 个项目文件推送到 `main`，包括课程原件、文献、草稿、备份及隐藏校验文件，未新增忽略规则。双语检查、README 相对链接、本次文档格式及本地文件与跟踪清单一致性核验通过。原提取文本的历史行尾空格保留。本次未修改作业正文。
 
 ## 当前活动：HW02 柔性直流
 
